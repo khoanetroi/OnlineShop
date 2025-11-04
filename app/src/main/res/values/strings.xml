@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">OnlineShop</string>
+    <string name="title_splash"><font color="#dc6f31">Your Shoping</font> Destination \nFor Everything</string>
+    <string name="subtitle_splash">Get personalized recommendations \nEnjoy fast, free shipping</string>
+    <string name="signin">Already have an account? <font color="#dc6f31">SignIn</font></string>
+    <string name="profile_image">Profile Image</string>
+    <string name="cart_icon">Cart Icon</string>
+    <string name="bell_icon">Notification Bell</string>
+    <string name="settings_icon">Settings Icon</string>
+</resources>
