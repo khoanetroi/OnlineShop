@@ -20,11 +20,9 @@ public class AuthRepository {
     public AuthRepository() {
         this.firebaseAuth = FirebaseAuth.getInstance();
         this.firebaseDatabase = FirebaseDatabase.getInstance();
-        // Enable offline persistence
         try {
             this.firebaseDatabase.setPersistenceEnabled(true);
         } catch (Exception e) {
-            // Already enabled
         }
     }
 
