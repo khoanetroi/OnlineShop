@@ -6,10 +6,13 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.databinding.ActivitySplashBinding;
 
 public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
+    private UserPreferences userPreferences;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,7 +20,21 @@ public class SplashActivity extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.startBtn.setOnClickListener(v -> startActivity(new Intent(SplashActivity.this, MainActivity.class)));
+        userPreferences = new UserPreferences(this);
 
+        // Check if user is already logged in
+        if (userPreferences.isLoggedIn()) {
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            finish();
+            return;
+        }
+
+        binding.startBtn.setOnClickListener(v -> {
+            startActivity(new Intent(SplashActivity.this, RegisterActivity.class));
+        });
+
+        binding.textView3.setOnClickListener(v -> {
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+        });
     }
 }

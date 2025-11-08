@@ -20,6 +20,7 @@ import com.example.onlineshop.Adapter.PopularAdapter;
 import com.example.onlineshop.Adapter.SliderAdapter;
 import com.example.onlineshop.Domain.BannerModel;
 import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;
 import com.example.onlineshop.ViewModel.MainViewModel;
 import com.example.onlineshop.databinding.ActivityMainBinding;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private MainViewModel viewModel;
+    private UserPreferences userPreferences;
 
 
     @Override
@@ -39,12 +41,30 @@ public class MainActivity extends AppCompatActivity {
         binding=ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         
+        userPreferences = new UserPreferences(this);
         viewModel = new MainViewModel();
+        
         initCategory();
         initSlider();
         initPopular();
         bottomNavigation();
         setVariable();
+        
+        // Check if we need to select home (coming from profile back button)
+        checkAndSelectHome();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        checkAndSelectHome();
+    }
+
+    private void checkAndSelectHome() {
+        if (getIntent().getBooleanExtra("select_home", false)) {
+            binding.bottomNavigation.setItemSelected(R.id.home, true);
+        }
     }
 
     private void setVariable() {
@@ -56,20 +76,15 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigation.setOnItemSelectedListener(new ChipNavigationBar.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int i) {
-//                switch (i) {
-//                    case R.id.home:
-//                        // Already on home
-//                        break;
-//                    case R.id.favorites:
-//                        // TODO: Navigate to favorites
-//                        break;
-//                    case R.id.cart:
-//                        startActivity(new Intent(MainActivity.this, CartActivity.class));
-//                        break;
-//                    case R.id.profile:
-//                        // TODO: Navigate to profile
-//                        break;
-//                }
+                if (i == R.id.home) {
+                    // Already on home
+                } else if (i == R.id.favorites) {
+                    // TODO: Navigate to favorites
+                } else if (i == R.id.cart) {
+                    startActivity(new Intent(MainActivity.this, CartActivity.class));
+                } else if (i == R.id.profile) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                }
             }
         });
     }
