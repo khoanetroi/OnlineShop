@@ -106,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
                     result.user.getName()
                 );
                 Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                startActivity(new Intent(RegisterActivity.this, MainContainerActivity.class));
                 finish();
             } else {
                 Toast.makeText(this, result.message, Toast.LENGTH_LONG).show();

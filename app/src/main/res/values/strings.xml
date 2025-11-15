@@ -7,4 +7,6 @@
     <string name="cart_icon">Cart Icon</string>
     <string name="bell_icon">Notification Bell</string>
     <string name="settings_icon">Settings Icon</string>
+    <string name="back">Back</string>
+    <string name="favorite">Favorite</string>
 </resources>

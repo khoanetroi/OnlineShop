@@ -2,12 +2,10 @@ package com.example.onlineshop.Activity;
 
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -16,31 +14,37 @@ import com.example.onlineshop.Adapter.PicListAdapter;
 import com.example.onlineshop.Adapter.SizeAdapter;
 import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Helper.ManagmentCart;
-import com.example.onlineshop.R;
+import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.databinding.ActivityDetailBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
-private ActivityDetailBinding binding;
-private ItemsModel object;
-private int numberOrder=1;
-private ManagmentCart managmentCart;
-
-
+    private ActivityDetailBinding binding;
+    private ItemsModel object;
+    private int numberOrder = 1;
+    private ManagmentCart managmentCart;
+    private DatabaseReference wishlistRef;
+    private boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        binding=ActivityDetailBinding.inflate(getLayoutInflater());
+        binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         managmentCart = new ManagmentCart(this);
+        initWishlist();
         getBundle();
         initPicList();
-        initSize();
         initColor();
+        initSize();
     }
 
     private void initColor() {
@@ -54,27 +58,150 @@ private ManagmentCart managmentCart;
     }
 
     private void initPicList() {
-        ArrayList<String> picList=new ArrayList<>(object.getPicUrl());
+        ArrayList<String> picList = new ArrayList<>(object.getPicUrl());
         Glide.with(this)
                 .load(picList.get(0))
                 .into(binding.pic);
-        binding.picList.setAdapter(new PicListAdapter(picList,binding.pic));
-        binding.picList.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        binding.picList.setAdapter(new PicListAdapter(picList, binding.pic));
+        binding.picList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+    }
+
+    private void initWishlist() {
+        UserPreferences userPreferences = new UserPreferences(this);
+        String uid = userPreferences.getUserId();
+        if (uid != null) {
+            wishlistRef = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("wishlist");
+        }
     }
 
     private void getBundle() {
         object = (ItemsModel) getIntent().getSerializableExtra("object");
+        if (object == null) {
+            finish();
+            return;
+        }
+
         binding.titleTxt.setText(object.getTitle());
-        binding.priceTxt.setText("$" + object.getPrice());
-        binding.oldPriceTxt.setText("$" + object.getOldPrice());
-        binding.oldPriceTxt.setPaintFlags(binding.oldPriceTxt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        
+        // Set discount price and original price with strikethrough
+        String discountPrice = "$" + String.format("%.2f", object.getPrice());
+        String originalPrice = "$" + String.format("%.2f", object.getOldPrice());
+        binding.discountPriceTxt.setText(discountPrice);
+        binding.originalPriceTxt.setText(originalPrice);
+        
+        // Set strikethrough on original price
+        binding.originalPriceTxt.setPaintFlags(binding.originalPriceTxt.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+        
+        // Set rating
+        String ratingText = String.format("%.1f (%d Review)", object.getRating(), object.getReview());
+        binding.ratingTxt.setText(ratingText);
+        
         binding.descriptionTxt.setText(object.getDescription());
+        binding.numberItemTxt.setText(String.valueOf(numberOrder));
+
+        // Quantity selector
+        binding.minusBtn.setOnClickListener(v -> {
+            if (numberOrder > 1) {
+                numberOrder--;
+                binding.numberItemTxt.setText(String.valueOf(numberOrder));
+            }
+        });
+
+        binding.plusBtn.setOnClickListener(v -> {
+            numberOrder++;
+            binding.numberItemTxt.setText(String.valueOf(numberOrder));
+        });
+
+        // Read more functionality
+        binding.readMoreTxt.setOnClickListener(v -> {
+            if (binding.descriptionTxt.getMaxLines() == 3) {
+                binding.descriptionTxt.setMaxLines(Integer.MAX_VALUE);
+                binding.readMoreTxt.setText("Read Less");
+            } else {
+                binding.descriptionTxt.setMaxLines(3);
+                binding.readMoreTxt.setText("Read More");
+            }
+        });
 
         binding.addToCartBtn.setOnClickListener(v -> {
             object.setNumberinCart(numberOrder);
             managmentCart.insertItem(object);
+            Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show();
         });
-        binding.backBtn.setOnClickListener(v -> finish());
+
+        binding.backBtn.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(com.example.onlineshop.R.anim.slide_in_left, com.example.onlineshop.R.anim.slide_out_right);
+        });
+
+        // Cart icon button - navigate to cart
+        if (binding.cartIconBtn != null) {
+            binding.cartIconBtn.setOnClickListener(v -> {
+                // Navigate to cart - you can implement this based on your navigation structure
+                finish();
+            });
+        }
+
+        checkIsFavorite();
+    }
+
+    private void checkIsFavorite() {
+        if (wishlistRef == null || object == null || object.getTitle() == null) {
+            updateFavIcon();
+            return;
+        }
+
+        wishlistRef.orderByChild("title").equalTo(object.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                isFavorite = snapshot.exists();
+                updateFavIcon();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                updateFavIcon();
+            }
+        });
+    }
+
+    private void toggleFavorite() {
+        if (wishlistRef == null) {
+            Toast.makeText(this, "Please login to use favorites", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (object == null || object.getTitle() == null) return;
+
+        if (isFavorite) {
+            // Remove from wishlist
+            wishlistRef.orderByChild("title").equalTo(object.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        child.getRef().removeValue();
+                    }
+                    isFavorite = false;
+                    updateFavIcon();
+                    Toast.makeText(DetailActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                }
+            });
+        } else {
+            // Add to wishlist
+            wishlistRef.push().setValue(object).addOnSuccessListener(unused -> {
+                isFavorite = true;
+                updateFavIcon();
+                Toast.makeText(DetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void updateFavIcon() {
+        // Favorite functionality can be added later if needed
     }
 }
 

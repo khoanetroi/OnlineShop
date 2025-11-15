@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // Check if user is already logged in
         if (userPreferences.isLoggedIn()) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            startActivity(new Intent(SplashActivity.this, MainContainerActivity.class));
             finish();
             return;
         }

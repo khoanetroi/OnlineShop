@@ -1,33 +1,41 @@
-package com.example.onlineshop.Activity;
+package com.example.onlineshop.Fragment;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.onlineshop.Domain.UserModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.Respository.AuthRepository;
+import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityEditProfileBinding;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileFragment extends Fragment {
     private ActivityEditProfileBinding binding;
     private AuthRepository authRepository;
     private UserPreferences userPreferences;
     private UserModel currentUser;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        binding = ActivityEditProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = ActivityEditProfileBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        
         authRepository = new AuthRepository();
-        userPreferences = new UserPreferences(this);
+        userPreferences = new UserPreferences(requireContext());
 
         loadUserProfile();
         setupListeners();
@@ -44,18 +52,19 @@ public class EditProfileActivity extends AppCompatActivity {
                     currentUser = user;
                     binding.nameEdt.setText(user.getName());
                     binding.emailEdt.setText(user.getEmail());
-                    binding.phoneEdt.setText(user.getPhone());
-                    binding.addressEdt.setText(user.getAddress());
+                    if (user.getPhone() != null) {
+                        binding.phoneEdt.setText(user.getPhone());
+                    }
                 }
             });
         }
     }
 
     private void setupListeners() {
-        binding.backBtn.setOnClickListener(v -> finish());
-
-        binding.changePhotoTxt.setOnClickListener(v -> {
-            Toast.makeText(this, "Photo upload feature coming soon", Toast.LENGTH_SHORT).show();
+        binding.backBtn.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().onBackPressed();
+            }
         });
 
         binding.saveBtn.setOnClickListener(v -> saveProfile());
@@ -64,7 +73,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfile() {
         String name = binding.nameEdt.getText().toString().trim();
         String phone = binding.phoneEdt.getText().toString().trim();
-        String address = binding.addressEdt.getText().toString().trim();
 
         if (TextUtils.isEmpty(name)) {
             binding.nameEdt.setError("Name is required");
@@ -72,13 +80,12 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         if (currentUser == null) {
-            Toast.makeText(this, "User data not loaded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "User data not loaded", Toast.LENGTH_SHORT).show();
             return;
         }
 
         currentUser.setName(name);
         currentUser.setPhone(phone);
-        currentUser.setAddress(address);
 
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.saveBtn.setEnabled(false);
@@ -93,11 +100,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     currentUser.getEmail(),
                     currentUser.getName()
                 );
-                Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
             } else {
-                Toast.makeText(this, "Failed to update profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
             }
         });
     }
 }
+

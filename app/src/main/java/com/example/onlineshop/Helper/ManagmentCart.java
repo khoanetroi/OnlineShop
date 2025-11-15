@@ -56,6 +56,13 @@ public class ManagmentCart {
         changeNumberItemsListener.changed();
     }
 
+    public void removeItem(ArrayList<ItemsModel> listItem, int position) {
+        if (position >= 0 && position < listItem.size()) {
+            listItem.remove(position);
+            tinyDB.putListObject("CartList", listItem);
+        }
+    }
+
     public Double getTotalFee() {
         ArrayList<ItemsModel> listItem2 = getListCart();
         double fee = 0;
@@ -63,5 +70,10 @@ public class ManagmentCart {
             fee = fee + (listItem2.get(i).getPrice() * listItem2.get(i).getNumberinCart());
         }
         return fee;
+    }
+
+    public void clearCart() {
+        ArrayList<ItemsModel> emptyList = new ArrayList<>();
+        tinyDB.putListObject("CartList", emptyList);
     }
 }

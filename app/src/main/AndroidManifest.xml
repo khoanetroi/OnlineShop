@@ -15,22 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnlineShop">
         <activity
+            android:name=".Activity.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.PaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ForgotPasswordActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.CartActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.DetailActivity"
@@ -45,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".Activity.MainContainerActivity"
             android:exported="true" />
     </application>
 

@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_grey"
-    tools:context=".Activity.MainActivity"
-    tools:ignore="MissingClass">
+    tools:context=".Fragment.HomeFragment">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -94,7 +93,7 @@
                     android:drawableStart="@drawable/search_icon"
                     android:drawablePadding="8dp"
                     android:ems="10"
-                    android:hint="Sreach..."
+                    android:hint="Search..."
                     android:inputType="text"
                     android:paddingHorizontal="16dp" 
                     android:drawableEnd="@drawable/microphone"/>

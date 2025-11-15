@@ -57,6 +57,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                 Intent intent=new Intent(context, DetailActivity.class);
                 intent.putExtra("object",items.get(position));
                 context.startActivity(intent);
+                if (context instanceof android.app.Activity) {
+                    ((android.app.Activity) context).overridePendingTransition(com.example.onlineshop.R.anim.slide_in_right, com.example.onlineshop.R.anim.slide_out_left);
+                }
             }
         });
     }

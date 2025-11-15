@@ -21,7 +21,7 @@
         app:cnb_iconColor="@color/white"/>
     <item
         android:id="@+id/profile"
-        android:title="Profile"
+        android:title="Setting"
         android:icon="@drawable/btn_4"
         app:cnb_backgroundColor="@color/orange"
         app:cnb_iconColor="@color/white"/>
