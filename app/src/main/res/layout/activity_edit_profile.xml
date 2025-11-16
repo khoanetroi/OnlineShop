@@ -95,8 +95,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/profile"
-                    app:tint="@color/dark_gray" />
+                    android:src="@drawable/btn_4" />
 
                 <EditText
                     android:id="@+id/nameEdt"
