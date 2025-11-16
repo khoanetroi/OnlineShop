@@ -108,6 +108,11 @@ public class FavoritesFragment extends Fragment {
             updateChipStates();
             applyFilterAndSort();
         });
+
+        binding.notificationBtn.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadFavorites() {

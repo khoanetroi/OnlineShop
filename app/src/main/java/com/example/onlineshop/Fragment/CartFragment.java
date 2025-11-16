@@ -83,7 +83,10 @@ public class CartFragment extends Fragment {
     }
 
     private void setVariable() {
-        // No variables to set
+        binding.notificationBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void showCheckoutBottomSheet() {

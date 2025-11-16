@@ -135,12 +135,13 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         // Cart icon button - navigate to cart
-        if (binding.cartIconBtn != null) {
-            binding.cartIconBtn.setOnClickListener(v -> {
-                // Navigate to cart - you can implement this based on your navigation structure
-                finish();
-            });
-        }
+        binding.cartIconBtn.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(DetailActivity.this, com.example.onlineshop.Activity.MainContainerActivity.class);
+            intent.putExtra("select_cart", true);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(com.example.onlineshop.R.anim.slide_in_right, com.example.onlineshop.R.anim.slide_out_left);
+        });
 
         checkIsFavorite();
     }

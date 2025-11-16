@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
+    android:background="@color/lighter_gray"
     tools:context=".Fragment.CartFragment">
 
     <TextView
@@ -37,12 +37,6 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="24dp">
 
-                <ImageView
-                    android:id="@+id/backBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/back" />
-
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -54,10 +48,11 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/cartIcon"
+                    android:id="@+id/notificationBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/cart_icon" />
+                    android:contentDescription="@string/bell_icon"
+                    app:srcCompat="@drawable/bell_icon" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

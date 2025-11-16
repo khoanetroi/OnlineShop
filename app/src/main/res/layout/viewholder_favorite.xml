@@ -25,9 +25,11 @@
         android:layout_height="24dp"
         android:layout_margin="12dp"
         android:contentDescription="@string/favorite"
+        android:background="@drawable/circle_white_bg"
+        android:padding="6dp"
         app:layout_constraintEnd_toEndOf="@id/pic"
         app:layout_constraintTop_toTopOf="@id/pic"
-        app:srcCompat="@drawable/fav" />
+        app:srcCompat="@drawable/red_heart" />
 
     <TextView
         android:id="@+id/titleTxt"

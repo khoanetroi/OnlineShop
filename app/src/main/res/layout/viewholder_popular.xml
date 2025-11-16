@@ -33,6 +33,18 @@
         app:layout_constraintStart_toStartOf="@+id/pic"
         app:layout_constraintTop_toTopOf="@+id/pic"/>
 
+    <ImageView
+        android:id="@+id/favBtn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/favorite"
+        android:background="@drawable/circle_white_bg"
+        android:padding="6dp"
+        app:layout_constraintEnd_toEndOf="@+id/pic"
+        app:layout_constraintTop_toTopOf="@+id/pic"
+        app:srcCompat="@drawable/heart" />
+
     <TextView
         android:id="@+id/titleTxt"
         android:layout_width="0dp"

@@ -32,10 +32,13 @@ public class MainContainerActivity extends AppCompatActivity {
 
         setupBottomNavigation();
         
-        // Check if we need to select profile (coming from NotificationActivity)
+        // Check if we need to select a specific fragment
         if (getIntent().getBooleanExtra("select_profile", false)) {
             binding.bottomNavigation.setItemSelected(R.id.profile, true);
             loadFragment(new SettingsFragment(), false);
+        } else if (getIntent().getBooleanExtra("select_cart", false)) {
+            binding.bottomNavigation.setItemSelected(R.id.cart, true);
+            loadFragment(new CartFragment(), false);
         } else {
             // Load default fragment (Home)
             loadFragment(new HomeFragment(), false);
