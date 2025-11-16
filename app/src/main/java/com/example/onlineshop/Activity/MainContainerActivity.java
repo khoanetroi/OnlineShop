@@ -9,11 +9,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.onlineshop.Fragment.CartFragment;
 import com.example.onlineshop.Fragment.ChangePasswordFragment;
 import com.example.onlineshop.Fragment.EditProfileFragment;
 import com.example.onlineshop.Fragment.FavoritesFragment;
 import com.example.onlineshop.Fragment.HomeFragment;
+import com.example.onlineshop.Fragment.MyCartFragment;
+import com.example.onlineshop.Fragment.MyOrderFragment;
 import com.example.onlineshop.Fragment.SettingsFragment;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityMainContainerBinding;
@@ -36,9 +37,9 @@ public class MainContainerActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("select_profile", false)) {
             binding.bottomNavigation.setItemSelected(R.id.profile, true);
             loadFragment(new SettingsFragment(), false);
-        } else if (getIntent().getBooleanExtra("select_cart", false)) {
-            binding.bottomNavigation.setItemSelected(R.id.cart, true);
-            loadFragment(new CartFragment(), false);
+        } else if (getIntent().getBooleanExtra("select_my_order", false)) {
+            binding.bottomNavigation.setItemSelected(R.id.my_order, true);
+            loadFragment(new MyOrderFragment(), false);
         } else {
             // Load default fragment (Home)
             loadFragment(new HomeFragment(), false);
@@ -55,8 +56,8 @@ public class MainContainerActivity extends AppCompatActivity {
                     fragment = new HomeFragment();
                 } else if (i == R.id.favorites) {
                     fragment = new FavoritesFragment();
-                } else if (i == R.id.cart) {
-                    fragment = new CartFragment();
+                } else if (i == R.id.my_order) {
+                    fragment = new MyOrderFragment();
                 } else if (i == R.id.profile) {
                     fragment = new SettingsFragment();
                 }
@@ -70,6 +71,10 @@ public class MainContainerActivity extends AppCompatActivity {
     
     public void navigateToFragment(int navItemId) {
         binding.bottomNavigation.setItemSelected(navItemId, true);
+    }
+
+    public void navigateToMyCart() {
+        loadFragment(new MyCartFragment(), true);
     }
 
     public void navigateToEditProfile() {

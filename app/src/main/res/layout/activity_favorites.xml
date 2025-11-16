@@ -32,6 +32,14 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/cartBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/cart_icon"
+            app:srcCompat="@drawable/cart_icon" />
+
+        <ImageView
             android:id="@+id/notificationBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

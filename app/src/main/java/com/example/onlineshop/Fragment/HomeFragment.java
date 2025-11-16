@@ -53,11 +53,11 @@ public class HomeFragment extends Fragment {
 
     private void setVariable() {
         binding.imageView5.setOnClickListener(v -> {
-            // Navigate to cart fragment via parent activity
+            // Navigate to MyCart fragment via parent activity
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
-                activity.navigateToFragment(R.id.cart);
+                activity.navigateToMyCart();
             }
         });
         binding.imageView4.setOnClickListener(v -> {

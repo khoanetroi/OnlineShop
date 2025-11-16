@@ -12,19 +12,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Adapter.CartAdapter;
+import com.example.onlineshop.Domain.AppSettingsModel;
 import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Helper.ChangeNumberItemsListener;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.R;
+import com.example.onlineshop.Respository.MainRepository;
 import com.example.onlineshop.databinding.ActivityCartBinding;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class CartFragment extends Fragment {
+public class MyCartFragment extends Fragment {
     private ActivityCartBinding binding;
     private ManagmentCart managmentCart;
     private CartAdapter cartAdapter;
+    private MainRepository mainRepository;
+    private AppSettingsModel appSettings;
 
     @Nullable
     @Override
@@ -38,8 +42,30 @@ public class CartFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         
         managmentCart = new ManagmentCart(requireContext());
+        mainRepository = new MainRepository();
+        loadAppSettings();
         setVariable();
         initCartList();
+    }
+
+    private void loadAppSettings() {
+        mainRepository.loadAppSettings().observe(getViewLifecycleOwner(), settings -> {
+            if (settings != null) {
+                appSettings = settings;
+                // Update checkout modal if cart already has items
+                if (cartAdapter != null && !cartAdapter.getSelectedItems().isEmpty()) {
+                    updateCheckoutModal();
+                }
+            } else {
+                // Use default settings if failed to load
+                appSettings = new AppSettingsModel();
+                appSettings.setCurrency("USD");
+                appSettings.setCurrencySymbol("$");
+                appSettings.setTaxRate(0.1);
+                appSettings.setShippingFee(10);
+                appSettings.setFreeShippingThreshold(100);
+            }
+        });
     }
 
     private void initCartList() {
@@ -56,32 +82,46 @@ public class CartFragment extends Fragment {
             @Override
             public void changed() {
                 updateCheckoutModal();
+                // Refresh cart list if needed
+                if(managmentCart.getListCart().isEmpty()) {
+                    binding.emptyTxt.setVisibility(View.VISIBLE);
+                    binding.scrollView2.setVisibility(View.GONE);
+                    binding.checkoutModalContainer.setVisibility(View.GONE);
+                }
             }
         });
         cartAdapter.setSelectionListener(new CartAdapter.OnItemSelectionChangedListener() {
             @Override
             public void onSelectionChanged(int selectedCount) {
                 if (selectedCount > 0) {
-                    // Show or update the checkout modal
                     updateCheckoutModal();
                     binding.checkoutModalContainer.setVisibility(View.VISIBLE);
                 } else {
-                    // Auto-hide when all items are unchecked
                     binding.checkoutModalContainer.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onItemChecked(ItemsModel item, int position) {
-                // Show or update the checkout modal when an item is checked
                 updateCheckoutModal();
                 binding.checkoutModalContainer.setVisibility(View.VISIBLE);
             }
         });
         binding.cartView.setAdapter(cartAdapter);
+        
+        // Update checkout modal on first load if items exist
+        if (!managmentCart.getListCart().isEmpty()) {
+            updateCheckoutModal();
+        }
     }
 
     private void setVariable() {
+        binding.backBtn.setOnClickListener(v -> {
+            if (requireActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
+                requireActivity().onBackPressed();
+            }
+        });
+        
         binding.notificationBtn.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
             startActivity(intent);
@@ -91,27 +131,44 @@ public class CartFragment extends Fragment {
     private void updateCheckoutModal() {
         ArrayList<ItemsModel> selectedItems = cartAdapter.getSelectedItems();
         
-        // Hide modal if there are no selected items
         if (selectedItems.isEmpty()) {
             binding.checkoutModalContainer.setVisibility(View.GONE);
             return;
         }
+
+        // Wait for AppSettings to load
+        if (appSettings == null) {
+            return;
+        }
         
-        // Calculate prices
+        // Calculate prices using Firebase AppSettings
         double rawSubtotal = 0;
         for (ItemsModel item : selectedItems) {
             rawSubtotal += item.getPrice() * item.getNumberinCart();
         }
 
-        double percentTax = 0.02;
-        double delivery = 10.0;
-        double calculatedTax = Math.round((rawSubtotal * percentTax) * 100.0) / 100.0;
+        // Get settings from Firebase AppSettings
+        double taxRate = appSettings.getTaxRate();
+        double shippingFee = appSettings.getShippingFee();
+        
+        // Check for free shipping threshold
+        if (rawSubtotal >= appSettings.getFreeShippingThreshold()) {
+            shippingFee = 0;
+        }
+        
+        double calculatedTax = Math.round((rawSubtotal * taxRate) * 100.0) / 100.0;
         double calculatedSubtotal = Math.round(rawSubtotal * 100.0) / 100.0;
-        double calculatedTotal = Math.round((calculatedSubtotal + calculatedTax + delivery) * 100.0) / 100.0;
+        double calculatedTotal = Math.round((calculatedSubtotal + calculatedTax + shippingFee) * 100.0) / 100.0;
 
-        // Update UI
+        // Make final copies for use in lambda
+        final double finalShippingFee = shippingFee;
+        final double finalCalculatedSubtotal = calculatedSubtotal;
+        final double finalCalculatedTax = calculatedTax;
+        final double finalCalculatedTotal = calculatedTotal;
+
+        // Update UI with currency symbol from Firebase
         binding.subtotalTxt.setText(formatPrice(calculatedSubtotal));
-        binding.deliveryTxt.setText(formatPrice(delivery));
+        binding.deliveryTxt.setText(formatPrice(shippingFee));
         binding.taxTxt.setText(formatPrice(calculatedTax));
         binding.totalAmountTxt.setText(formatPrice(calculatedTotal));
 
@@ -119,16 +176,25 @@ public class CartFragment extends Fragment {
         binding.checkoutBtn.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.PaymentActivity.class);
             intent.putExtra("cart_items", selectedItems);
-            intent.putExtra("subtotal", calculatedSubtotal);
-            intent.putExtra("tax", calculatedTax);
-            intent.putExtra("delivery", delivery);
-            intent.putExtra("total", calculatedTotal);
+            intent.putExtra("subtotal", finalCalculatedSubtotal);
+            intent.putExtra("tax", finalCalculatedTax);
+            intent.putExtra("delivery", finalShippingFee);
+            intent.putExtra("total", finalCalculatedTotal);
             startActivity(intent);
         });
     }
 
     private String formatPrice(double value) {
-        return "$" + String.format(Locale.US, "%.2f", value);
+        // Format with currency symbol from AppSettings
+        String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
+        return symbol + String.format(Locale.getDefault(), "%.2f", value);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh cart when fragment resumes (e.g., after checkout)
+        initCartList();
     }
 
     @Override

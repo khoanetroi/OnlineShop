@@ -10,6 +10,7 @@ public class OrderModel {
     private double delivery;
     private double total;
     private long createdAt;
+    private long orderDate; // Required by Firebase rules
     private String status;
     private ArrayList<ItemsModel> items;
 
@@ -25,6 +26,7 @@ public class OrderModel {
         this.delivery = delivery;
         this.total = total;
         this.createdAt = createdAt;
+        this.orderDate = createdAt; // Set orderDate same as createdAt
         this.status = status;
         this.items = items;
     }
@@ -83,6 +85,18 @@ public class OrderModel {
 
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+        // Keep orderDate in sync with createdAt
+        this.orderDate = createdAt;
+    }
+
+    public long getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(long orderDate) {
+        this.orderDate = orderDate;
+        // Keep createdAt in sync with orderDate
+        this.createdAt = orderDate;
     }
 
     public String getStatus() {

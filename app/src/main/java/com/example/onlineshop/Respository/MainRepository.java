@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.onlineshop.Domain.AppSettingsModel;
 import com.example.onlineshop.Domain.BannerModel;
 import com.example.onlineshop.Domain.CategoryModel;
 import com.example.onlineshop.Domain.ItemsModel;
@@ -81,6 +82,32 @@ public class MainRepository {
             }
         });
         return listData;
+    }
+
+    public LiveData<AppSettingsModel> loadAppSettings() {
+        MutableLiveData<AppSettingsModel> settingsData = new MutableLiveData<>();
+        DatabaseReference ref = firebaseDatabase.getReference("AppSettings");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                AppSettingsModel settings = snapshot.getValue(AppSettingsModel.class);
+                settingsData.setValue(settings);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Return default settings if failed to load
+                AppSettingsModel defaultSettings = new AppSettingsModel();
+                defaultSettings.setCurrency("USD");
+                defaultSettings.setCurrencySymbol("$");
+                defaultSettings.setTaxRate(0.1);
+                defaultSettings.setShippingFee(10);
+                defaultSettings.setFreeShippingThreshold(100);
+                defaultSettings.setMaxCartItems(50);
+                settingsData.setValue(defaultSettings);
+            }
+        });
+        return settingsData;
     }
 
 

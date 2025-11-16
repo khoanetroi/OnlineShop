@@ -1,0 +1,182 @@
+{
+  "AppSettings": {
+    "currency": "USD",
+    "currencySymbol": "$",
+    "featuredCategories": {
+      "0": 1,
+      "1": 2,
+      "2": 3
+    },
+    "freeShippingThreshold": 100,
+    "maintenanceMode": false,
+    "maxCartItems": 50,
+    "minAppVersion": "1.0.0",
+    "returnPolicyDays": 30,
+    "shippingFee": 10,
+    "supportEmail": "support@onlineshop.com",
+    "supportPhone": "1-800-XXX-XXXX",
+    "taxRate": 0.1
+  },
+  "Banner": {
+    "banner_1": {
+      "active": true,
+      "id": "banner_1",
+      "link": "/category/women",
+      "order": 1,
+      "title": "Summer Sale",
+      "url": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/banner_1_vqsiey.png"
+    },
+    "banner_2": {
+      "active": true,
+      "id": "banner_2",
+      "link": "/category/men",
+      "order": 2,
+      "title": "New Collection",
+      "url": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/banner_2_vqsiey.png"
+    }
+  },
+  "Category": {
+    "cat_1": {
+      "id": 1,
+      "picPath": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/category_1.png",
+      "title": "Women"
+    },
+    "cat_2": {
+      "id": 2,
+      "picPath": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/category_2.png",
+      "title": "Men"
+    },
+    "cat_3": {
+      "id": 3,
+      "picPath": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/category_3.png",
+      "title": "Kids"
+    },
+    "cat_4": {
+      "id": 4,
+      "picPath": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/category_4.png",
+      "title": "Accessories"
+    }
+  },
+  "Items": {
+    "item_1": {
+      "title": "Summer Dress",
+      "description": "Beautiful summer dress made from high-quality cotton",
+      "offPercent": "30",
+      "size": ["S", "M", "L", "XL"],
+      "color": ["Red", "Blue", "Yellow", "White"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_1_1.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_1_2.png"
+      ],
+      "price": 29.99,
+      "oldPrice": 39.99,
+      "review": 124,
+      "rating": 4.5,
+      "NumberinCart": 0
+    },
+    "item_2": {
+      "title": "Classic T-Shirt",
+      "description": "Comfortable classic t-shirt for everyday wear",
+      "offPercent": "20",
+      "size": ["S", "M", "L", "XL", "XXL"],
+      "color": ["Black", "White", "Gray", "Navy"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_2_1.png"
+      ],
+      "price": 19.99,
+      "oldPrice": 24.99,
+      "review": 89,
+      "rating": 4.3,
+      "NumberinCart": 0
+    },
+    "item_3": {
+      "title": "Denim Jeans",
+      "description": "Premium denim jeans with perfect fit",
+      "offPercent": "15",
+      "size": ["28", "30", "32", "34", "36"],
+      "color": ["Blue", "Black", "Gray"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_3_1.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_3_2.png"
+      ],
+      "price": 59.99,
+      "oldPrice": 69.99,
+      "review": 256,
+      "rating": 4.7,
+      "NumberinCart": 0
+    },
+    "item_4": {
+      "title": "Running Shoes",
+      "description": "Lightweight running shoes with cushioned sole",
+      "offPercent": "25",
+      "size": ["7", "8", "9", "10", "11", "12"],
+      "color": ["Black", "White", "Blue"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_4_1.png"
+      ],
+      "price": 79.99,
+      "oldPrice": 99.99,
+      "review": 342,
+      "rating": 4.8,
+      "NumberinCart": 0
+    },
+    "item_5": {
+      "title": "Leather Jacket",
+      "description": "Genuine leather jacket with classic design",
+      "offPercent": "40",
+      "size": ["S", "M", "L", "XL"],
+      "color": ["Black", "Brown"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_5_1.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_5_2.png"
+      ],
+      "price": 149.99,
+      "oldPrice": 249.99,
+      "review": 167,
+      "rating": 4.6,
+      "NumberinCart": 0
+    },
+    "item_6": {
+      "title": "Casual Sneakers",
+      "description": "Comfortable casual sneakers for daily use",
+      "offPercent": "30",
+      "size": ["7", "8", "9", "10", "11"],
+      "color": ["White", "Black", "Gray"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_6_1.png"
+      ],
+      "price": 49.99,
+      "oldPrice": 69.99,
+      "review": 198,
+      "rating": 4.4,
+      "NumberinCart": 0
+    }
+  },
+  "Coupons": {
+    "coupon_1": {
+      "code": "WELCOME10",
+      "discount": 10,
+      "description": "10% off on first order",
+      "expiryDate": 1735689600000,
+      "minPurchase": 50,
+      "type": "percentage"
+    },
+    "coupon_2": {
+      "code": "FREESHIP",
+      "discount": 0,
+      "description": "Free shipping on orders over $100",
+      "expiryDate": 1735689600000,
+      "minPurchase": 100,
+      "type": "shipping"
+    },
+    "coupon_3": {
+      "code": "SAVE20",
+      "discount": 20,
+      "description": "$20 off on orders over $150",
+      "expiryDate": 1735689600000,
+      "minPurchase": 150,
+      "type": "fixed"
+    }
+  }
+}
+
