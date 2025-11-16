@@ -17,6 +17,8 @@ import com.example.onlineshop.Activity.DetailActivity;
 import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.databinding.ViewholderFavoriteBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,9 +37,19 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         this.items = items;
         this.context = context;
 
-        UserPreferences userPreferences = new UserPreferences(context);
-        String uid = userPreferences.getUserId();
-        if (uid != null) {
+        // Use same logic as PopularAdapter - check Firebase Auth first, then fallback to UserPreferences
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = null;
+        
+        if (firebaseUser != null) {
+            uid = firebaseUser.getUid();
+        } else {
+            // Fallback to UserPreferences if Firebase Auth not available
+            UserPreferences userPreferences = new UserPreferences(context);
+            uid = userPreferences.getUserId();
+        }
+        
+        if (uid != null && !uid.isEmpty()) {
             wishlistRef = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("wishlist");
         } else {
             wishlistRef = null;
@@ -53,70 +65,116 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteAdapter.ViewHolder holder, int position) {
+        if (position < 0 || position >= items.size()) {
+            return;
+        }
+        
         ItemsModel item = items.get(position);
-
-        holder.binding.titleTxt.setText(item.getTitle());
-        holder.binding.priceTxt.setText("$" + item.getPrice());
-
-        RequestOptions options = new RequestOptions().transform(new CenterInside());
-        if (item.getPicUrl() != null && !item.getPicUrl().isEmpty()) {
-            Glide.with(context)
-                    .load(item.getPicUrl().get(0))
-                    .apply(options)
-                    .into(holder.binding.pic);
+        if (item == null || holder.binding == null) {
+            return;
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("object", item);
-                context.startActivity(intent);
-                if (context instanceof android.app.Activity) {
-                    ((android.app.Activity) context).overridePendingTransition(com.example.onlineshop.R.anim.slide_in_right, com.example.onlineshop.R.anim.slide_out_left);
-                }
+        try {
+            holder.binding.titleTxt.setText(item.getTitle() != null ? item.getTitle() : "");
+            holder.binding.priceTxt.setText("$" + String.format("%.2f", item.getPrice()));
+
+            RequestOptions options = new RequestOptions().transform(new CenterInside());
+            if (item.getPicUrl() != null && !item.getPicUrl().isEmpty() && item.getPicUrl().get(0) != null) {
+                Glide.with(context)
+                        .load(item.getPicUrl().get(0))
+                        .apply(options)
+                        .into(holder.binding.pic);
             }
-        });
 
-        holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition == RecyclerView.NO_POSITION) return;
-
-                if (wishlistRef == null) {
-                    Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
-                    return;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (context == null || item == null) {
+                        return;
+                    }
+                    try {
+                        Intent intent = new Intent(context, DetailActivity.class);
+                        intent.putExtra("object", item);
+                        context.startActivity(intent);
+                        if (context instanceof android.app.Activity) {
+                            ((android.app.Activity) context).overridePendingTransition(com.example.onlineshop.R.anim.slide_in_right, com.example.onlineshop.R.anim.slide_out_left);
+                        }
+                    } catch (Exception e) {
+                        android.util.Log.e("FavoriteAdapter", "Error opening detail", e);
+                    }
                 }
+            });
 
-                removeFromWishlist(item, adapterPosition);
-            }
-        });
+            holder.binding.favBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (context == null || item == null) {
+                        return;
+                    }
+                    try {
+                        int adapterPosition = holder.getAdapterPosition();
+                        if (adapterPosition == RecyclerView.NO_POSITION) {
+                            return;
+                        }
+
+                        if (wishlistRef == null) {
+                            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        removeFromWishlist(item, adapterPosition);
+                    } catch (Exception e) {
+                        android.util.Log.e("FavoriteAdapter", "Error in fav button click", e);
+                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            android.util.Log.e("FavoriteAdapter", "Error binding view", e);
+        }
     }
 
     private void removeFromWishlist(ItemsModel item, int position) {
-        wishlistRef.orderByChild("title").equalTo(item.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    child.getRef().removeValue();
+        if (wishlistRef == null) {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        if (item == null || item.getTitle() == null || item.getTitle().isEmpty()) {
+            Toast.makeText(context, "Invalid item", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        try {
+            wishlistRef.orderByChild("title").equalTo(item.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+                        // Item already removed or doesn't exist
+                        Toast.makeText(context, "Item not found in favorites", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    // Remove from Firebase
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        child.getRef().removeValue().addOnSuccessListener(unused -> {
+                            // Firebase listener in FavoritesFragment will automatically update the list
+                            // So we don't need to manually remove from items here
+                            Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(context, "Failed to remove favorite: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+                    }
                 }
 
-                if (position >= 0 && position < items.size()) {
-                    items.remove(position);
-                    notifyItemRemoved(position);
-                } else {
-                    notifyDataSetChanged();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(context, "Failed to update favorites: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-                Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(context, "Failed to update favorites", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

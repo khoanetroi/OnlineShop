@@ -65,8 +65,8 @@
       "size": ["S", "M", "L", "XL"],
       "color": ["Red", "Blue", "Yellow", "White"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_1_1.png",
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_1_2.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298190/summer_dress2_xe0bei.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298198/summer_dress1_l6dryv.png"
       ],
       "price": 29.99,
       "oldPrice": 39.99,
@@ -81,7 +81,10 @@
       "size": ["S", "M", "L", "XL", "XXL"],
       "color": ["Black", "White", "Gray", "Navy"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_2_1.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763305573/tshirt1_ibnxek.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763305571/tshirt2_dqsfqs.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763305571/tshirt3_ixhzjj.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763305575/tshirt4_pgb8dr.png"
       ],
       "price": 19.99,
       "oldPrice": 24.99,
@@ -96,8 +99,9 @@
       "size": ["28", "30", "32", "34", "36"],
       "color": ["Blue", "Black", "Gray"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_3_1.png",
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_3_2.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298378/jean1_ebzjrt.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298380/jean2_okza8q.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298381/jean3_xcda8o.png"
       ],
       "price": 59.99,
       "oldPrice": 69.99,
@@ -112,7 +116,9 @@
       "size": ["7", "8", "9", "10", "11", "12"],
       "color": ["Black", "White", "Blue"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_4_1.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298618/shoe2_a6m2eg.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298618/shoe3_ez37zs.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763298619/shoe1_gf169v.png"
       ],
       "price": 79.99,
       "oldPrice": 99.99,
@@ -127,8 +133,9 @@
       "size": ["S", "M", "L", "XL"],
       "color": ["Black", "Brown"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_5_1.png",
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_5_2.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763299197/jacket3_evz4kj.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763299198/jacket1_txvii1.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763299200/jacket2_xfxksd.png"
       ],
       "price": 149.99,
       "oldPrice": 249.99,
@@ -143,11 +150,99 @@
       "size": ["7", "8", "9", "10", "11"],
       "color": ["White", "Black", "Gray"],
       "picUrl": [
-        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202773/item_6_1.png"
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763299410/sneaker2_skl36b.png",
+        "https://res.cloudinary.com/dj950jydk/image/upload/v1763299427/sneaker1_stfvat.png"
       ],
       "price": 49.99,
       "oldPrice": 69.99,
       "review": 198,
+      "rating": 4.4,
+      "NumberinCart": 0
+    },
+    "item_7": {
+      "title": "Casual Shoes for Men",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "offPercent": "30",
+      "size": ["41", "42", "43", "44"],
+      "color": ["#006fc4", "#daa048", "#398d41", "#0c3c72"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201929/shoes1_jpoyjw.png"
+      ],
+      "price": 35,
+      "oldPrice": 45,
+      "review": 10,
+      "rating": 4.6,
+      "NumberinCart": 0
+    },
+    "item_8": {
+      "title": "Stylish Plaid Coat",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "offPercent": "25",
+      "size": ["M", "L", "XL", "XXL"],
+      "color": ["#006fc4", "#daa048", "#398d41", "#0c3c72"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741202381/men9_hamdep.png"
+      ],
+      "price": 55,
+      "oldPrice": 65,
+      "review": 45,
+      "rating": 4.1,
+      "NumberinCart": 0
+    },
+    "item_9": {
+      "title": "Essentials Mens T-Shirts",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "offPercent": "15",
+      "size": ["M", "L", "XL", "XXL"],
+      "color": ["#006fc4", "#daa048", "#398d41", "#0c3c72"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201943/t1_nsn7my.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201934/t2_unxcdt.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201943/t3_n8re96.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201950/t4_v8wlyn.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201952/t5_lfghcj.png"
+      ],
+      "price": 75,
+      "oldPrice": 90,
+      "review": 10,
+      "rating": 4.5,
+      "NumberinCart": 0
+    },
+    "item_10": {
+      "title": "Hihawk Men's Slim Fit Blazer",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "offPercent": "30",
+      "size": ["M", "L", "XL", "XXL"],
+      "color": ["#006fc4", "#daa048", "#398d41", "#0c3c72"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201959/c5_xjq3is.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201942/c3_pv8oje.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201936/c4_blerim.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201926/c1_svzikr.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201944/c2_wkgqzo.png"
+      ],
+      "price": 40,
+      "oldPrice": 50,
+      "review": 2,
+      "rating": 4.2,
+      "NumberinCart": 0
+    },
+    "item_11": {
+      "title": "Brown Shoes",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "offPercent": "30",
+      "size": ["41", "42", "43", "44"],
+      "color": ["#006fc4", "#daa048", "#398d41", "#0c3c72"],
+      "picUrl": [
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201960/s4_jkml5e.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201953/s5_ix8ad7.jpg",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201949/s1_uqjjq9.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201953/s3_etkpn1.png",
+        "https://res.cloudinary.com/dkikc5ywq/image/upload/v1741201928/s5_fj15qf.png"
+      ],
+      "price": 39,
+      "oldPrice": 48,
+      "review": 9,
       "rating": 4.4,
       "NumberinCart": 0
     }

@@ -17,6 +17,8 @@ import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityFavoritesBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ public class FavoritesFragment extends Fragment {
     private final ArrayList<ItemsModel> displayItems = new ArrayList<>();
     private FavoriteAdapter adapter;
     private DatabaseReference wishlistRef;
+    private ValueEventListener wishlistListener;
 
     private enum SortMode { NONE, LATEST, MOST_POPULAR, CHEAPEST }
     private SortMode currentSort = SortMode.NONE;
@@ -58,9 +61,19 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void initFirebase() {
-        UserPreferences userPreferences = new UserPreferences(requireContext());
-        String uid = userPreferences.getUserId();
-        if (uid != null) {
+        // Use same logic as PopularAdapter - check Firebase Auth first, then fallback to UserPreferences
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = null;
+        
+        if (firebaseUser != null) {
+            uid = firebaseUser.getUid();
+        } else {
+            // Fallback to UserPreferences if Firebase Auth not available
+            UserPreferences userPreferences = new UserPreferences(requireContext());
+            uid = userPreferences.getUserId();
+        }
+        
+        if (uid != null && !uid.isEmpty()) {
             wishlistRef = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("wishlist");
         }
     }
@@ -127,69 +140,106 @@ public class FavoritesFragment extends Fragment {
     private void loadFavorites() {
         if (wishlistRef == null) {
             binding.emptyTxt.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
             return;
         }
 
         binding.progressBar.setVisibility(View.VISIBLE);
 
-        wishlistRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                allItems.clear();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    ItemsModel item = child.getValue(ItemsModel.class);
-                    if (item != null) {
-                        allItems.add(item);
+        try {
+            wishlistListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (binding == null || adapter == null) {
+                        return; // Fragment destroyed
+                    }
+                    
+                    try {
+                        allItems.clear();
+                        if (snapshot.exists() && snapshot.hasChildren()) {
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                ItemsModel item = child.getValue(ItemsModel.class);
+                                if (item != null) {
+                                    allItems.add(item);
+                                }
+                            }
+                        }
+                        applyFilterAndSort();
+                    } catch (Exception e) {
+                        android.util.Log.e("FavoritesFragment", "Error processing favorites", e);
+                    } finally {
+                        if (binding != null) {
+                            binding.progressBar.setVisibility(View.GONE);
+                        }
                     }
                 }
-                applyFilterAndSort();
-                binding.progressBar.setVisibility(View.GONE);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    if (binding != null) {
+                        binding.progressBar.setVisibility(View.GONE);
+                    }
+                    android.util.Log.e("FavoritesFragment", "Firebase error: " + error.getMessage());
+                }
+            };
+            wishlistRef.addValueEventListener(wishlistListener);
+        } catch (Exception e) {
+            android.util.Log.e("FavoritesFragment", "Error setting up listener", e);
+            if (binding != null) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.emptyTxt.setVisibility(View.VISIBLE);
             }
-        });
+        }
     }
 
     private void applyFilterAndSort() {
-        String query = binding.searchEdt.getText().toString().trim().toLowerCase();
+        if (binding == null || adapter == null) {
+            return; // Fragment destroyed
+        }
+        
+        try {
+            String query = binding.searchEdt.getText().toString().trim().toLowerCase();
 
-        displayItems.clear();
-        for (ItemsModel item : allItems) {
-            if (query.isEmpty() || (item.getTitle() != null && item.getTitle().toLowerCase().contains(query))) {
-                displayItems.add(item);
+            displayItems.clear();
+            for (ItemsModel item : allItems) {
+                if (query.isEmpty() || (item.getTitle() != null && item.getTitle().toLowerCase().contains(query))) {
+                    displayItems.add(item);
+                }
             }
-        }
 
-        switch (currentSort) {
-            case LATEST:
-                Collections.reverse(displayItems);
-                break;
-            case MOST_POPULAR:
-                Collections.sort(displayItems, new Comparator<ItemsModel>() {
-                    @Override
-                    public int compare(ItemsModel o1, ItemsModel o2) {
-                        return Double.compare(o2.getRating(), o1.getRating());
-                    }
-                });
-                break;
-            case CHEAPEST:
-                Collections.sort(displayItems, new Comparator<ItemsModel>() {
-                    @Override
-                    public int compare(ItemsModel o1, ItemsModel o2) {
-                        return Double.compare(o1.getPrice(), o2.getPrice());
-                    }
-                });
-                break;
-            case NONE:
-            default:
-                break;
-        }
+            switch (currentSort) {
+                case LATEST:
+                    Collections.reverse(displayItems);
+                    break;
+                case MOST_POPULAR:
+                    Collections.sort(displayItems, new Comparator<ItemsModel>() {
+                        @Override
+                        public int compare(ItemsModel o1, ItemsModel o2) {
+                            return Double.compare(o2.getRating(), o1.getRating());
+                        }
+                    });
+                    break;
+                case CHEAPEST:
+                    Collections.sort(displayItems, new Comparator<ItemsModel>() {
+                        @Override
+                        public int compare(ItemsModel o1, ItemsModel o2) {
+                            return Double.compare(o1.getPrice(), o2.getPrice());
+                        }
+                    });
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
 
-        adapter.notifyDataSetChanged();
-        binding.emptyTxt.setVisibility(displayItems.isEmpty() ? View.VISIBLE : View.GONE);
+            adapter.notifyDataSetChanged();
+            binding.emptyTxt.setVisibility(displayItems.isEmpty() ? View.VISIBLE : View.GONE);
+        } catch (Exception e) {
+            android.util.Log.e("FavoritesFragment", "Error applying filter/sort", e);
+        }
     }
 
     private void updateChipStates() {
@@ -212,6 +262,11 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Remove Firebase listener to prevent memory leaks
+        if (wishlistRef != null && wishlistListener != null) {
+            wishlistRef.removeEventListener(wishlistListener);
+            wishlistListener = null;
+        }
         binding = null;
     }
 }
