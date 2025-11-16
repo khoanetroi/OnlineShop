@@ -17,8 +17,6 @@ import com.example.onlineshop.Helper.ChangeNumberItemsListener;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityCartBinding;
-import com.example.onlineshop.databinding.BottomSheetCheckoutBinding;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -27,8 +25,6 @@ public class CartFragment extends Fragment {
     private ActivityCartBinding binding;
     private ManagmentCart managmentCart;
     private CartAdapter cartAdapter;
-    private BottomSheetDialog checkoutBottomSheet;
-    private BottomSheetCheckoutBinding bottomSheetBinding;
 
     @Nullable
     @Override
@@ -59,24 +55,27 @@ public class CartFragment extends Fragment {
         cartAdapter = new CartAdapter(managmentCart.getListCart(), requireContext(), new ChangeNumberItemsListener() {
             @Override
             public void changed() {
-                updateCheckoutBottomSheet();
+                updateCheckoutModal();
             }
         });
         cartAdapter.setSelectionListener(new CartAdapter.OnItemSelectionChangedListener() {
             @Override
             public void onSelectionChanged(int selectedCount) {
                 if (selectedCount > 0) {
-                    updateCheckoutBottomSheet();
+                    // Show or update the checkout modal
+                    updateCheckoutModal();
+                    binding.checkoutModalContainer.setVisibility(View.VISIBLE);
                 } else {
-                    if (checkoutBottomSheet != null && checkoutBottomSheet.isShowing()) {
-                        checkoutBottomSheet.dismiss();
-                    }
+                    // Auto-hide when all items are unchecked
+                    binding.checkoutModalContainer.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onItemChecked(ItemsModel item, int position) {
-                showCheckoutBottomSheet();
+                // Show or update the checkout modal when an item is checked
+                updateCheckoutModal();
+                binding.checkoutModalContainer.setVisibility(View.VISIBLE);
             }
         });
         binding.cartView.setAdapter(cartAdapter);
@@ -89,39 +88,16 @@ public class CartFragment extends Fragment {
         });
     }
 
-    private void showCheckoutBottomSheet() {
-        if (checkoutBottomSheet != null && checkoutBottomSheet.isShowing() && bottomSheetBinding != null) {
-            updateCheckoutBottomSheetContent(bottomSheetBinding);
-            return;
-        }
-
-        bottomSheetBinding = BottomSheetCheckoutBinding.inflate(LayoutInflater.from(requireContext()));
-        checkoutBottomSheet = new BottomSheetDialog(requireContext());
-        checkoutBottomSheet.setContentView(bottomSheetBinding.getRoot());
-        
-        checkoutBottomSheet.setCanceledOnTouchOutside(true);
-        checkoutBottomSheet.setCancelable(true);
-
-        updateCheckoutBottomSheetContent(bottomSheetBinding);
-        checkoutBottomSheet.show();
-    }
-
-    private void updateCheckoutBottomSheet() {
-        if (checkoutBottomSheet != null && checkoutBottomSheet.isShowing() && bottomSheetBinding != null) {
-            updateCheckoutBottomSheetContent(bottomSheetBinding);
-        }
-    }
-
-    private void updateCheckoutBottomSheetContent(BottomSheetCheckoutBinding bottomSheetBinding) {
+    private void updateCheckoutModal() {
         ArrayList<ItemsModel> selectedItems = cartAdapter.getSelectedItems();
         
+        // Hide modal if there are no selected items
         if (selectedItems.isEmpty()) {
-            if (checkoutBottomSheet != null) {
-                checkoutBottomSheet.dismiss();
-            }
+            binding.checkoutModalContainer.setVisibility(View.GONE);
             return;
         }
-
+        
+        // Calculate prices
         double rawSubtotal = 0;
         for (ItemsModel item : selectedItems) {
             rawSubtotal += item.getPrice() * item.getNumberinCart();
@@ -133,13 +109,14 @@ public class CartFragment extends Fragment {
         double calculatedSubtotal = Math.round(rawSubtotal * 100.0) / 100.0;
         double calculatedTotal = Math.round((calculatedSubtotal + calculatedTax + delivery) * 100.0) / 100.0;
 
-        bottomSheetBinding.subtotalTxt.setText(formatPrice(calculatedSubtotal));
-        bottomSheetBinding.deliveryTxt.setText(formatPrice(delivery));
-        bottomSheetBinding.taxTxt.setText(formatPrice(calculatedTax));
-        bottomSheetBinding.totalAmountTxt.setText(formatPrice(calculatedTotal));
+        // Update UI
+        binding.subtotalTxt.setText(formatPrice(calculatedSubtotal));
+        binding.deliveryTxt.setText(formatPrice(delivery));
+        binding.taxTxt.setText(formatPrice(calculatedTax));
+        binding.totalAmountTxt.setText(formatPrice(calculatedTotal));
 
-        bottomSheetBinding.checkoutBtn.setOnClickListener(v -> {
-            checkoutBottomSheet.dismiss();
+        // Set checkout button listener
+        binding.checkoutBtn.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.PaymentActivity.class);
             intent.putExtra("cart_items", selectedItems);
             intent.putExtra("subtotal", calculatedSubtotal);
