@@ -1,7 +1,6 @@
 package com.example.onlineshop.Activity;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,11 +22,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void setupListeners() {
         binding.backBtn.setOnClickListener(v -> finish());
-
         binding.backToLoginTxt.setOnClickListener(v -> finish());
-
-        binding.resetBtn.setOnClickListener(v -> {
-            Toast.makeText(this, "Feature in development", Toast.LENGTH_SHORT).show();
-        });
     }
 }
