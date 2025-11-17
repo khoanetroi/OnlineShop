@@ -62,7 +62,6 @@ public class PaymentActivity extends AppCompatActivity {
         setupSummary();
         setupListeners();
         
-        // Initialize payment method UI (show placeholder)
         updatePaymentMethodPlaceholder();
     }
 
@@ -70,7 +69,6 @@ public class PaymentActivity extends AppCompatActivity {
         Serializable extra = getIntent().getSerializableExtra("cart_items");
         if (extra instanceof ArrayList<?>) {
             try {
-                //noinspection unchecked
                 items = (ArrayList<ItemsModel>) extra;
             } catch (Exception ignored) {
             }
@@ -99,7 +97,6 @@ public class PaymentActivity extends AppCompatActivity {
         binding.productsView.setLayoutManager(new LinearLayoutManager(this));
         binding.productsView.setAdapter(new PaymentProductAdapter(items));
         
-        // Update products label with count
         if (binding.productsLabelTxt != null) {
             binding.productsLabelTxt.setText("Products (" + items.size() + ")");
         }
@@ -117,7 +114,6 @@ public class PaymentActivity extends AppCompatActivity {
             overridePendingTransition(com.example.onlineshop.R.anim.slide_in_left, com.example.onlineshop.R.anim.slide_out_right);
         });
         
-        // Payment method card click to show modal
         binding.paymentMethodCard.setOnClickListener(v -> showPaymentMethodModal());
 
         binding.checkoutNowBtn.setOnClickListener(v -> placeOrder());
@@ -128,7 +124,6 @@ public class PaymentActivity extends AppCompatActivity {
         paymentMethodBottomSheet = new BottomSheetDialog(this);
         paymentMethodBottomSheet.setContentView(bottomSheetBinding.getRoot());
         
-        // Create payment methods list
         List<PaymentMethodAdapter.PaymentMethod> paymentMethods = Arrays.asList(
             new PaymentMethodAdapter.PaymentMethod("Master Card", R.drawable.master_card),
             new PaymentMethodAdapter.PaymentMethod("Visa", R.drawable.visa),
@@ -138,13 +133,11 @@ public class PaymentActivity extends AppCompatActivity {
         PaymentMethodAdapter adapter = new PaymentMethodAdapter(paymentMethods);
         adapter.setOnPaymentMethodSelectedListener(method -> {
             selectedPaymentMethod = method;
-            // Don't dismiss here, let user confirm
         });
         
         bottomSheetBinding.paymentMethodsView.setLayoutManager(new LinearLayoutManager(this));
         bottomSheetBinding.paymentMethodsView.setAdapter(adapter);
         
-        // Confirm button in modal
         bottomSheetBinding.confirmPaymentBtn.setOnClickListener(v -> {
             PaymentMethodAdapter.PaymentMethod selected = adapter.getSelectedMethod();
             if (selected != null) {
@@ -164,7 +157,6 @@ public class PaymentActivity extends AppCompatActivity {
             binding.selectedPaymentNameTxt.setText(method.getName());
             binding.selectedPaymentIcon.setImageResource(method.getIconResId());
             binding.selectedPaymentIcon.setVisibility(View.VISIBLE);
-            // Update button state
             updateCheckoutButtonState(true);
         }
     }
@@ -184,10 +176,8 @@ public class PaymentActivity extends AppCompatActivity {
         mainRepository.loadAppSettings().observe(this, settings -> {
             if (settings != null) {
                 appSettings = settings;
-                // Update summary if already displayed
                 setupSummary();
             } else {
-                // Use default settings if failed to load
                 appSettings = new AppSettingsModel();
                 appSettings.setCurrency("USD");
                 appSettings.setCurrencySymbol("$");
@@ -198,13 +188,11 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private String formatPrice(double value) {
-        // Use currency symbol from AppSettings
         String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
         return symbol + String.format(Locale.getDefault(), "%.2f", value);
     }
 
     private void placeOrder() {
-        // Validate payment method is selected
         if (selectedPaymentMethod == null) {
             Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show();
             return;
@@ -223,7 +211,6 @@ public class PaymentActivity extends AppCompatActivity {
             return;
         }
 
-        // Prevent multiple clicks
         if (!binding.checkoutNowBtn.isEnabled()) {
             return;
         }
@@ -257,7 +244,6 @@ public class PaymentActivity extends AppCompatActivity {
                 items
         );
         
-        // Ensure orderDate is set (required by Firebase rules)
         order.setOrderDate(currentTime);
         order.setCreatedAt(currentTime);
 
@@ -266,12 +252,10 @@ public class PaymentActivity extends AppCompatActivity {
                     binding.progressBar.setVisibility(View.GONE);
                     updateCheckoutButtonState(true);
 
-                    // Clear local cart after successful order
                     managmentCart.clearCart();
 
                     Toast.makeText(PaymentActivity.this, "Order placed successfully", Toast.LENGTH_SHORT).show();
                     
-                    // Navigate to MyOrder page
                     Intent intent = new Intent(PaymentActivity.this, MainContainerActivity.class);
                     intent.putExtra("select_my_order", true);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -282,14 +266,12 @@ public class PaymentActivity extends AppCompatActivity {
                     binding.progressBar.setVisibility(View.GONE);
                     updateCheckoutButtonState(true);
                     
-                    // Show detailed error message for debugging
                     String errorMessage = "Failed to place order";
                     if (e.getMessage() != null) {
                         errorMessage += ": " + e.getMessage();
                     }
                     Toast.makeText(PaymentActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     
-                    // Log error for debugging
                     android.util.Log.e("PaymentActivity", "Order placement failed", e);
                     android.util.Log.e("PaymentActivity", "Order details: orderId=" + orderId + ", userId=" + uid + ", items=" + (items != null ? items.size() : 0));
                     android.util.Log.e("PaymentActivity", "Order object: " + order.toString());

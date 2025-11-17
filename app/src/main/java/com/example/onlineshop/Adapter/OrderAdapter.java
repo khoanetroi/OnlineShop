@@ -56,20 +56,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
             return;
         }
 
-        // Get first item for display
         com.example.onlineshop.Domain.ItemsModel firstItem = order.getItems().get(0);
         
-        // Set product image
         if (firstItem.getPicUrl() != null && !firstItem.getPicUrl().isEmpty()) {
             Glide.with(holder.itemView.getContext())
                     .load(firstItem.getPicUrl().get(0))
                     .into(holder.binding.productPic);
         }
 
-        // Set product title
         holder.binding.productTitleTxt.setText(firstItem.getTitle());
 
-        // Set color
         if (firstItem.getColor() != null && !firstItem.getColor().isEmpty()) {
             String colorText = "Color: " + firstItem.getColor().get(0);
             holder.binding.productColorTxt.setText(colorText);
@@ -77,32 +73,26 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
             holder.binding.productColorTxt.setText("Color: N/A");
         }
 
-        // Set quantity
         int totalQty = 0;
         for (com.example.onlineshop.Domain.ItemsModel item : order.getItems()) {
             totalQty += item.getNumberinCart();
         }
         holder.binding.productQtyTxt.setText("Qty: " + totalQty);
 
-        // Set price
         String priceText = formatPrice(order.getTotal());
         holder.binding.priceTxt.setText(priceText);
 
-        // Set status badge
         String status = order.getStatus() != null ? order.getStatus() : "Pending";
         holder.binding.statusBadge.setText(status);
         
-        // Configure status badge appearance
         if (status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered")) {
             holder.binding.statusBadge.setBackgroundResource(R.drawable.status_completed_bg);
             holder.binding.statusBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.green));
         } else {
-            // On Progress, Pending, etc.
             holder.binding.statusBadge.setBackgroundResource(R.drawable.status_on_progress_bg);
             holder.binding.statusBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_blue_dark));
         }
 
-        // Set action button
         boolean isCompleted = status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered");
         if (isCompleted) {
             holder.binding.actionBtn.setText("Received Order");
@@ -120,7 +110,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
             });
         }
 
-        // Detail button
         holder.binding.detailBtn.setOnClickListener(v -> {
             if (actionListener != null) {
                 actionListener.onDetailClick(order);
@@ -134,7 +123,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
     }
 
     private String formatPrice(double value) {
-        // Format as USD currency (currency symbol should ideally come from AppSettings)
         NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
         return formatter.format(value);
     }

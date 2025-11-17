@@ -33,7 +33,6 @@ public class MainContainerActivity extends AppCompatActivity {
 
         setupBottomNavigation();
         
-        // Check if we need to select a specific fragment
         if (getIntent().getBooleanExtra("select_profile", false)) {
             binding.bottomNavigation.setItemSelected(R.id.profile, true);
             loadFragment(new SettingsFragment(), false);
@@ -41,7 +40,6 @@ public class MainContainerActivity extends AppCompatActivity {
             binding.bottomNavigation.setItemSelected(R.id.my_order, true);
             loadFragment(new MyOrderFragment(), false);
         } else {
-            // Load default fragment (Home)
             loadFragment(new HomeFragment(), false);
         }
     }
@@ -89,7 +87,6 @@ public class MainContainerActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         
-        // Add smooth fade transition
         transaction.setCustomAnimations(
                 R.anim.fade_in,
                 R.anim.fade_out,
@@ -110,10 +107,8 @@ public class MainContainerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // If there are fragments in back stack, pop them
             getSupportFragmentManager().popBackStack();
         } else {
-            // If no back stack, exit app
             super.onBackPressed();
         }
     }

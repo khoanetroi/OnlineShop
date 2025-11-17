@@ -83,23 +83,19 @@ public class DetailActivity extends AppCompatActivity {
 
         binding.titleTxt.setText(object.getTitle());
         
-        // Set discount price and original price with strikethrough
         String discountPrice = "$" + String.format("%.2f", object.getPrice());
         String originalPrice = "$" + String.format("%.2f", object.getOldPrice());
         binding.discountPriceTxt.setText(discountPrice);
         binding.originalPriceTxt.setText(originalPrice);
         
-        // Set strikethrough on original price
         binding.originalPriceTxt.setPaintFlags(binding.originalPriceTxt.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
         
-        // Set rating
         String ratingText = String.format("%.1f (%d Review)", object.getRating(), object.getReview());
         binding.ratingTxt.setText(ratingText);
         
         binding.descriptionTxt.setText(object.getDescription());
         binding.numberItemTxt.setText(String.valueOf(numberOrder));
 
-        // Quantity selector
         binding.minusBtn.setOnClickListener(v -> {
             if (numberOrder > 1) {
                 numberOrder--;
@@ -112,7 +108,6 @@ public class DetailActivity extends AppCompatActivity {
             binding.numberItemTxt.setText(String.valueOf(numberOrder));
         });
 
-        // Read more functionality
         binding.readMoreTxt.setOnClickListener(v -> {
             if (binding.descriptionTxt.getMaxLines() == 3) {
                 binding.descriptionTxt.setMaxLines(Integer.MAX_VALUE);
@@ -134,7 +129,6 @@ public class DetailActivity extends AppCompatActivity {
             overridePendingTransition(com.example.onlineshop.R.anim.slide_in_left, com.example.onlineshop.R.anim.slide_out_right);
         });
 
-        // Cart icon button - navigate to cart
         binding.cartIconBtn.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(DetailActivity.this, com.example.onlineshop.Activity.MainContainerActivity.class);
             intent.putExtra("select_cart", true);
@@ -175,7 +169,6 @@ public class DetailActivity extends AppCompatActivity {
         if (object == null || object.getTitle() == null) return;
 
         if (isFavorite) {
-            // Remove from wishlist
             wishlistRef.orderByChild("title").equalTo(object.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -192,7 +185,6 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         } else {
-            // Add to wishlist
             wishlistRef.push().setValue(object).addOnSuccessListener(unused -> {
                 isFavorite = true;
                 updateFavIcon();
@@ -202,7 +194,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void updateFavIcon() {
-        // Favorite functionality can be added later if needed
     }
 }
 

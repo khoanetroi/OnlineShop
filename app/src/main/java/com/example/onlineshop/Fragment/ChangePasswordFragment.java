@@ -46,7 +46,6 @@ public class ChangePasswordFragment extends Fragment {
             }
         });
 
-        // Password visibility toggles
         binding.newPasswordToggle.setOnClickListener(v -> {
             isNewPasswordVisible = !isNewPasswordVisible;
             int selection = binding.newPasswordEdt.getSelectionEnd();

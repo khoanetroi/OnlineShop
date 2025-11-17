@@ -40,9 +40,6 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         this.items = items;
     }
     
-    /**
-     * Safely update UI on main thread
-     */
     private void updateUIOnMainThread(Runnable update) {
         if (context != null && mainHandler != null) {
             mainHandler.post(() -> {
@@ -65,23 +62,17 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         return new ViewHolder(binding);
     }
     
-    /**
-     * Get wishlist reference for current user
-     * Returns null if user is not logged in
-     */
     private DatabaseReference getWishlistRef() {
         if (context == null) {
             return null;
         }
         
-        // Check Firebase Auth first
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             String uid = firebaseUser.getUid();
             return FirebaseDatabase.getInstance().getReference("Users").child(uid).child("wishlist");
         }
         
-        // Fallback to UserPreferences if Firebase Auth not available
         try {
             UserPreferences userPreferences = new UserPreferences(context);
             String uid = userPreferences.getUserId();
@@ -101,8 +92,6 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             return;
         }
         
-        // Clear previous listener references (single-use listeners auto-remove after firing)
-        // We just clear references to prevent memory leaks and invalid updates
         holder.listener = null;
         holder.listenerRef = null;
         holder.itemView.setTag(null);
@@ -121,7 +110,6 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         }
         holder.binding.oldPriceTxt.setPaintFlags(holder.binding.oldPriceTxt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        // Load image with null check
         if (item.getPicUrl() != null && !item.getPicUrl().isEmpty()) {
             RequestOptions options = new RequestOptions();
             options = options.transform(new CenterInside());
@@ -131,23 +119,18 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                     .into(holder.binding.pic);
         }
 
-        // Store the item tag to verify ViewHolder is still valid
         holder.itemView.setTag(item.getTitle());
 
-        // Check if item is favorited and set heart icon
         checkFavoriteStatus(item, holder);
 
-        // Favorite button click listener - clear previous first
         holder.binding.favBtn.setOnClickListener(null);
         holder.binding.favBtn.setOnClickListener(v -> {
             try {
-                // Verify context is still valid
                 if (context == null) {
                     android.util.Log.e("PopularAdapter", "Context is null in favBtn click");
                     return;
                 }
                 
-                // Verify holder is still valid
                 if (holder == null || holder.binding == null || holder.binding.favBtn == null) {
                     android.util.Log.e("PopularAdapter", "Holder is invalid in favBtn click");
                     return;
@@ -166,14 +149,12 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                 }
             } catch (Exception e) {
                 android.util.Log.e("PopularAdapter", "Error in favBtn click listener", e);
-                // Show error to user if possible
                 if (context != null) {
                     Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Item click listener - clear previous first
         holder.itemView.setOnClickListener(null);
         holder.itemView.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
@@ -201,10 +182,8 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             return;
         }
 
-        // Store item title for validation
         String itemTitle = item.getTitle();
 
-        // Get fresh wishlist reference
         DatabaseReference wishlistRef = getWishlistRef();
         if (wishlistRef == null) {
             if (holder.binding != null && holder.binding.favBtn != null) {
@@ -214,22 +193,18 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         }
 
         try {
-            // Create listener
             ValueEventListener listener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
-                        // Verify ViewHolder is still valid (hasn't been recycled)
                         if (holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
                             return;
                         }
                         
-                        // Verify the item is still the same
                         if (holder.itemView.getTag() == null || !itemTitle.equals(holder.itemView.getTag())) {
                             return;
                         }
                         
-                        // Update UI on main thread
                         updateUIOnMainThread(() -> {
                             try {
                                 if (holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
@@ -260,11 +235,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                 }
             };
             
-            // Store listener reference for cleanup
             holder.listener = listener;
             holder.listenerRef = wishlistRef;
             
-            // Add listener (using addListenerForSingleValueEvent - it auto-removes after one use)
             try {
                 wishlistRef.orderByChild("title").equalTo(itemTitle).addListenerForSingleValueEvent(listener);
             } catch (Exception e) {
@@ -283,19 +256,16 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
     }
 
     private void toggleFavorite(ItemsModel item, ViewHolder holder) {
-        // Validate context
         if (context == null) {
             android.util.Log.e("PopularAdapter", "Context is null in toggleFavorite");
             return;
         }
         
-        // Validate holder and binding
         if (holder == null || holder.binding == null) {
             android.util.Log.e("PopularAdapter", "Holder or binding is null in toggleFavorite");
             return;
         }
 
-        // Get fresh wishlist reference
         DatabaseReference wishlistRef = getWishlistRef();
         if (wishlistRef == null) {
             Toast.makeText(context, "Please login to add favorites", Toast.LENGTH_SHORT).show();
@@ -308,28 +278,23 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         }
 
         try {
-            // Check current favorite status
             wishlistRef.orderByChild("title").equalTo(item.getTitle()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
-                        // Verify ViewHolder is still valid
                         if (holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
                             return;
                         }
                         
-                        // Verify the item is still the same
                         if (holder.itemView.getTag() == null || !item.getTitle().equals(holder.itemView.getTag())) {
                             return;
                         }
                         
                         if (snapshot.exists()) {
-                            // Remove from wishlist
                             for (DataSnapshot child : snapshot.getChildren()) {
                                 child.getRef().removeValue().addOnCompleteListener(task -> {
                                     updateUIOnMainThread(() -> {
                                         try {
-                                            // Double-check ViewHolder is still valid before updating UI
                                             if (holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
                                                 return;
                                             }
@@ -357,11 +322,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                                 });
                             }
                         } else {
-                            // Add to wishlist
                             wishlistRef.push().setValue(item).addOnSuccessListener(unused -> {
                                 updateUIOnMainThread(() -> {
                                     try {
-                                        // Double-check ViewHolder is still valid before updating UI
                                         if (holder.getAdapterPosition() == RecyclerView.NO_POSITION) {
                                             return;
                                         }
@@ -434,13 +397,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
-        // Clear listener references (addListenerForSingleValueEvent auto-removes after one use,
-        // but we clear references to prevent updating recycled ViewHolders)
         holder.listener = null;
         holder.listenerRef = null;
-        // Clear item tag
         holder.itemView.setTag(null);
-        // Clear click listeners
         if (holder.binding != null) {
             if (holder.binding.favBtn != null) {
                 holder.binding.favBtn.setOnClickListener(null);

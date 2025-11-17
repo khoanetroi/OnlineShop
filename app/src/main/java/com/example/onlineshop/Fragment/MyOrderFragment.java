@@ -52,7 +52,6 @@ public class MyOrderFragment extends Fragment {
 
     private void setupListeners() {
         binding.cartBtn.setOnClickListener(v -> {
-            // Navigate to MyCart fragment via parent activity
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
@@ -72,25 +71,15 @@ public class MyOrderFragment extends Fragment {
         orderAdapter.setActionListener(new OrderAdapter.OnOrderActionListener() {
             @Override
             public void onDetailClick(OrderModel order) {
-                // TODO: Navigate to order detail page
-                // Intent intent = new Intent(requireContext(), OrderDetailActivity.class);
-                // intent.putExtra("order", order);
-                // startActivity(intent);
             }
 
             @Override
             public void onTrackingClick(OrderModel order) {
-                // TODO: Navigate to tracking page
-                // Intent intent = new Intent(requireContext(), TrackingActivity.class);
-                // intent.putExtra("order", order);
-                // startActivity(intent);
             }
 
             @Override
             public void onReceiveOrderClick(OrderModel order) {
-                // Update order status to "Delivered" or "Received"
                 orderRepository.updateOrderStatus(order.getOrderId(), "Delivered");
-                // Refresh orders
                 loadOrders();
             }
         });
@@ -101,7 +90,6 @@ public class MyOrderFragment extends Fragment {
         binding.myOrderTab.setOnClickListener(v -> switchToMyOrderTab());
         binding.historyTab.setOnClickListener(v -> switchToHistoryTab());
         
-        // Start with My Order tab
         switchToMyOrderTab();
     }
 
@@ -112,7 +100,6 @@ public class MyOrderFragment extends Fragment {
         binding.historyTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
         binding.historyTab.setTypeface(null, android.graphics.Typeface.NORMAL);
         
-        // Move indicator
         binding.tabIndicator.post(() -> {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tabIndicator.getLayoutParams();
             params.width = binding.myOrderTab.getWidth();
@@ -123,7 +110,6 @@ public class MyOrderFragment extends Fragment {
                     .start();
         });
         
-        // Update orders
         updateOrdersDisplay();
     }
 
@@ -134,7 +120,6 @@ public class MyOrderFragment extends Fragment {
         binding.myOrderTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
         binding.myOrderTab.setTypeface(null, android.graphics.Typeface.NORMAL);
         
-        // Move indicator
         binding.tabIndicator.post(() -> {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tabIndicator.getLayoutParams();
             params.width = binding.historyTab.getWidth();
@@ -146,18 +131,15 @@ public class MyOrderFragment extends Fragment {
                     .start();
         });
         
-        // Update orders
         updateOrdersDisplay();
     }
 
     private void loadOrders() {
-        // Load in-progress orders
         orderRepository.loadInProgressOrders().observe(getViewLifecycleOwner(), orders -> {
             inProgressOrders = orders != null ? orders : new ArrayList<>();
             updateOrdersDisplay();
         });
 
-        // Load completed orders
         orderRepository.loadCompletedOrders().observe(getViewLifecycleOwner(), orders -> {
             completedOrders = orders != null ? orders : new ArrayList<>();
             updateOrdersDisplay();

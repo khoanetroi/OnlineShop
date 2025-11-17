@@ -52,12 +52,10 @@ public class MyCartFragment extends Fragment {
         mainRepository.loadAppSettings().observe(getViewLifecycleOwner(), settings -> {
             if (settings != null) {
                 appSettings = settings;
-                // Update checkout modal if cart already has items
                 if (cartAdapter != null && !cartAdapter.getSelectedItems().isEmpty()) {
                     updateCheckoutModal();
                 }
             } else {
-                // Use default settings if failed to load
                 appSettings = new AppSettingsModel();
                 appSettings.setCurrency("USD");
                 appSettings.setCurrencySymbol("$");
@@ -82,7 +80,6 @@ public class MyCartFragment extends Fragment {
             @Override
             public void changed() {
                 updateCheckoutModal();
-                // Refresh cart list if needed
                 if(managmentCart.getListCart().isEmpty()) {
                     binding.emptyTxt.setVisibility(View.VISIBLE);
                     binding.scrollView2.setVisibility(View.GONE);
@@ -109,7 +106,6 @@ public class MyCartFragment extends Fragment {
         });
         binding.cartView.setAdapter(cartAdapter);
         
-        // Update checkout modal on first load if items exist
         if (!managmentCart.getListCart().isEmpty()) {
             updateCheckoutModal();
         }
@@ -136,22 +132,18 @@ public class MyCartFragment extends Fragment {
             return;
         }
 
-        // Wait for AppSettings to load
         if (appSettings == null) {
             return;
         }
         
-        // Calculate prices using Firebase AppSettings
         double rawSubtotal = 0;
         for (ItemsModel item : selectedItems) {
             rawSubtotal += item.getPrice() * item.getNumberinCart();
         }
 
-        // Get settings from Firebase AppSettings
         double taxRate = appSettings.getTaxRate();
         double shippingFee = appSettings.getShippingFee();
         
-        // Check for free shipping threshold
         if (rawSubtotal >= appSettings.getFreeShippingThreshold()) {
             shippingFee = 0;
         }
@@ -160,19 +152,16 @@ public class MyCartFragment extends Fragment {
         double calculatedSubtotal = Math.round(rawSubtotal * 100.0) / 100.0;
         double calculatedTotal = Math.round((calculatedSubtotal + calculatedTax + shippingFee) * 100.0) / 100.0;
 
-        // Make final copies for use in lambda
         final double finalShippingFee = shippingFee;
         final double finalCalculatedSubtotal = calculatedSubtotal;
         final double finalCalculatedTax = calculatedTax;
         final double finalCalculatedTotal = calculatedTotal;
 
-        // Update UI with currency symbol from Firebase
         binding.subtotalTxt.setText(formatPrice(calculatedSubtotal));
         binding.deliveryTxt.setText(formatPrice(shippingFee));
         binding.taxTxt.setText(formatPrice(calculatedTax));
         binding.totalAmountTxt.setText(formatPrice(calculatedTotal));
 
-        // Set checkout button listener
         binding.checkoutBtn.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.PaymentActivity.class);
             intent.putExtra("cart_items", selectedItems);
@@ -185,7 +174,6 @@ public class MyCartFragment extends Fragment {
     }
 
     private String formatPrice(double value) {
-        // Format with currency symbol from AppSettings
         String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
         return symbol + String.format(Locale.getDefault(), "%.2f", value);
     }
@@ -193,7 +181,6 @@ public class MyCartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh cart when fragment resumes (e.g., after checkout)
         initCartList();
     }
 

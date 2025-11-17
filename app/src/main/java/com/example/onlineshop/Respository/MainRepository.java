@@ -96,7 +96,6 @@ public class MainRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Return default settings if failed to load
                 AppSettingsModel defaultSettings = new AppSettingsModel();
                 defaultSettings.setCurrency("USD");
                 defaultSettings.setCurrencySymbol("$");

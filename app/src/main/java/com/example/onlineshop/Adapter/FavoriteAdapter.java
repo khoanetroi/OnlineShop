@@ -37,14 +37,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         this.items = items;
         this.context = context;
 
-        // Use same logic as PopularAdapter - check Firebase Auth first, then fallback to UserPreferences
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = null;
         
         if (firebaseUser != null) {
             uid = firebaseUser.getUid();
         } else {
-            // Fallback to UserPreferences if Firebase Auth not available
             UserPreferences userPreferences = new UserPreferences(context);
             uid = userPreferences.getUserId();
         }
@@ -150,16 +148,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
-                        // Item already removed or doesn't exist
                         Toast.makeText(context, "Item not found in favorites", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
-                    // Remove from Firebase
                     for (DataSnapshot child : snapshot.getChildren()) {
                         child.getRef().removeValue().addOnSuccessListener(unused -> {
-                            // Firebase listener in FavoritesFragment will automatically update the list
-                            // So we don't need to manually remove from items here
                             Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
                         }).addOnFailureListener(e -> {
                             Toast.makeText(context, "Failed to remove favorite: " + e.getMessage(), Toast.LENGTH_SHORT).show();

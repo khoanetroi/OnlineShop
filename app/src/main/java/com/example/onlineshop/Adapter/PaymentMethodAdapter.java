@@ -62,10 +62,8 @@ public class PaymentMethodAdapter extends RecyclerView.Adapter<PaymentMethodAdap
         PaymentMethod method = paymentMethods.get(position);
         holder.binding.paymentNameTxt.setText(method.getName());
         
-        // Set payment method icon image
         holder.binding.paymentIcon.setImageResource(method.getIconResId());
         
-        // Show check icon if selected
         holder.binding.checkIcon.setVisibility(selectedPosition == position ? View.VISIBLE : View.GONE);
         
         holder.itemView.setOnClickListener(v -> {

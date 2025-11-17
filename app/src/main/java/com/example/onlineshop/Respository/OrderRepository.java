@@ -25,7 +25,6 @@ public class OrderRepository {
         try {
             this.firebaseDatabase.setPersistenceEnabled(true);
         } catch (Exception e) {
-            // Already initialized
         }
     }
 
@@ -48,16 +47,12 @@ public class OrderRepository {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     OrderModel order = childSnapshot.getValue(OrderModel.class);
                     if (order != null) {
-                        // Set orderId from key if not set
                         if (order.getOrderId() == null || order.getOrderId().isEmpty()) {
                             order.setOrderId(childSnapshot.getKey());
                         }
-                        // Ensure orderDate is set (required by Firebase rules)
-                        // If orderDate exists but createdAt doesn't, sync them
                         if (order.getOrderDate() != 0 && order.getCreatedAt() == 0) {
                             order.setCreatedAt(order.getOrderDate());
                         }
-                        // If createdAt exists but orderDate doesn't, sync them
                         if (order.getCreatedAt() != 0 && order.getOrderDate() == 0) {
                             order.setOrderDate(order.getCreatedAt());
                         }
@@ -65,7 +60,6 @@ public class OrderRepository {
                     }
                 }
                 
-                // Sort by creation date (newest first)
                 Collections.sort(list, (o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
                 
                 listData.setValue(list);
@@ -99,11 +93,9 @@ public class OrderRepository {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     OrderModel order = childSnapshot.getValue(OrderModel.class);
                     if (order != null) {
-                        // Set orderId from key if not set
                         if (order.getOrderId() == null || order.getOrderId().isEmpty()) {
                             order.setOrderId(childSnapshot.getKey());
                         }
-                        // Filter for in-progress orders (Pending, On Progress, etc.)
                         String status = order.getStatus() != null ? order.getStatus() : "";
                         if (!status.equalsIgnoreCase("Completed") && !status.equalsIgnoreCase("Delivered")) {
                             list.add(order);
@@ -111,7 +103,6 @@ public class OrderRepository {
                     }
                 }
                 
-                // Sort by creation date (newest first)
                 Collections.sort(list, (o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
                 
                 listData.setValue(list);
@@ -145,11 +136,9 @@ public class OrderRepository {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     OrderModel order = childSnapshot.getValue(OrderModel.class);
                     if (order != null) {
-                        // Set orderId from key if not set
                         if (order.getOrderId() == null || order.getOrderId().isEmpty()) {
                             order.setOrderId(childSnapshot.getKey());
                         }
-                        // Filter for completed orders
                         String status = order.getStatus() != null ? order.getStatus() : "";
                         if (status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered")) {
                             list.add(order);
@@ -157,7 +146,6 @@ public class OrderRepository {
                     }
                 }
                 
-                // Sort by creation date (newest first)
                 Collections.sort(list, (o1, o2) -> Long.compare(o2.getCreatedAt(), o1.getCreatedAt()));
                 
                 listData.setValue(list);

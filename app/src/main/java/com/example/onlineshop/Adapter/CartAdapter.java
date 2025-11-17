@@ -65,7 +65,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
         holder.binding.titleTxt.setText(item.getTitle());
         holder.binding.numberItemTxt.setText(String.valueOf(item.getNumberinCart()));
         
-        // Set color information
         if (item.getColor() != null && !item.getColor().isEmpty()) {
             String colorText = "Color: " + item.getColor().get(0);
             holder.binding.colorTxt.setText(colorText);
@@ -73,7 +72,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
             holder.binding.colorTxt.setText("Color: N/A");
         }
         
-        // Set price
         double totalPrice = item.getPrice() * item.getNumberinCart();
         holder.binding.priceTxt.setText("$" + String.format("%.2f", totalPrice));
         
@@ -81,15 +79,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
                 .load(item.getPicUrl().get(0))
                 .into(holder.binding.pic);
 
-        // Set checkbox state without triggering listener
         holder.binding.checkBox.setOnCheckedChangeListener(null);
         holder.binding.checkBox.setChecked(selectedPositions.contains(position));
 
-        // Checkbox click listener - show checkout modal when item is checked
         holder.binding.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 selectedPositions.add(position);
-                // Show checkout modal when item is checked
                 if (selectionListener != null) {
                     selectionListener.onSelectionChanged(selectedPositions.size());
                     selectionListener.onItemChecked(item, position);
@@ -102,11 +97,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
             }
         });
 
-        // Delete button click listener
         holder.binding.deleteBtn.setOnClickListener(v -> {
             managmentCart.removeItem(listItemSelected, position);
             selectedPositions.remove(position);
-            // Adjust positions after removal
             Set<Integer> newSelected = new HashSet<>();
             for (Integer pos : selectedPositions) {
                 if (pos > position) {

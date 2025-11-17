@@ -39,7 +39,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        // Hide bottom navigation from fragment layout since it's in container
         binding.bottomNavigation.setVisibility(View.GONE);
         
         userPreferences = new UserPreferences(requireContext());
@@ -53,7 +52,6 @@ public class HomeFragment extends Fragment {
 
     private void setVariable() {
         binding.imageView5.setOnClickListener(v -> {
-            // Navigate to MyCart fragment via parent activity
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
@@ -65,7 +63,6 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
         binding.imageView6.setOnClickListener(v -> {
-            // Navigate to settings fragment via parent activity
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();

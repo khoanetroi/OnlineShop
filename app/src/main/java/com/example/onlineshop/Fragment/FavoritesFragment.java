@@ -51,7 +51,6 @@ public class FavoritesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        // Hide bottom navigation from fragment layout since it's in container
         binding.bottomNavigation.setVisibility(View.GONE);
         
         initFirebase();
@@ -61,14 +60,12 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void initFirebase() {
-        // Use same logic as PopularAdapter - check Firebase Auth first, then fallback to UserPreferences
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String uid = null;
         
         if (firebaseUser != null) {
             uid = firebaseUser.getUid();
         } else {
-            // Fallback to UserPreferences if Firebase Auth not available
             UserPreferences userPreferences = new UserPreferences(requireContext());
             uid = userPreferences.getUserId();
         }
@@ -123,7 +120,6 @@ public class FavoritesFragment extends Fragment {
         });
 
         binding.cartBtn.setOnClickListener(v -> {
-            // Navigate to MyCart fragment via parent activity
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
@@ -154,7 +150,7 @@ public class FavoritesFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     if (binding == null || adapter == null) {
-                        return; // Fragment destroyed
+                        return;
                     }
                     
                     try {
@@ -197,7 +193,7 @@ public class FavoritesFragment extends Fragment {
 
     private void applyFilterAndSort() {
         if (binding == null || adapter == null) {
-            return; // Fragment destroyed
+            return;
         }
         
         try {
@@ -262,7 +258,6 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Remove Firebase listener to prevent memory leaks
         if (wishlistRef != null && wishlistListener != null) {
             wishlistRef.removeEventListener(wishlistListener);
             wishlistListener = null;

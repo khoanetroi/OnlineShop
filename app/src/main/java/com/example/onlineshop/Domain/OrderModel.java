@@ -85,7 +85,6 @@ public class OrderModel {
 
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
-        // Keep orderDate in sync with createdAt
         this.orderDate = createdAt;
     }
 
@@ -95,7 +94,6 @@ public class OrderModel {
 
     public void setOrderDate(long orderDate) {
         this.orderDate = orderDate;
-        // Keep createdAt in sync with orderDate
         this.createdAt = orderDate;
     }
 
