@@ -239,19 +239,21 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void updateChipStates() {
-        int selectedBg = getResources().getColor(R.color.orange);
-        int unselectedBg = getResources().getColor(R.color.white);
         int selectedText = getResources().getColor(R.color.white);
         int unselectedText = getResources().getColor(R.color.dark_gray);
 
-        setChipState(binding.chipAll, currentSort == SortMode.NONE, selectedBg, unselectedBg, selectedText, unselectedText);
-        setChipState(binding.chipLatest, currentSort == SortMode.LATEST, selectedBg, unselectedBg, selectedText, unselectedText);
-        setChipState(binding.chipMostPopular, currentSort == SortMode.MOST_POPULAR, selectedBg, unselectedBg, selectedText, unselectedText);
-        setChipState(binding.chipCheapest, currentSort == SortMode.CHEAPEST, selectedBg, unselectedBg, selectedText, unselectedText);
+        setChipState(binding.chipAll, currentSort == SortMode.NONE, selectedText, unselectedText);
+        setChipState(binding.chipLatest, currentSort == SortMode.LATEST, selectedText, unselectedText);
+        setChipState(binding.chipMostPopular, currentSort == SortMode.MOST_POPULAR, selectedText, unselectedText);
+        setChipState(binding.chipCheapest, currentSort == SortMode.CHEAPEST, selectedText, unselectedText);
     }
 
-    private void setChipState(android.widget.TextView chip, boolean selected, int selectedBg, int unselectedBg, int selectedText, int unselectedText) {
-        chip.setBackgroundColor(selected ? selectedBg : unselectedBg);
+    private void setChipState(android.widget.TextView chip, boolean selected, int selectedText, int unselectedText) {
+        if (selected) {
+            chip.setBackgroundResource(R.drawable.orange_bg);
+        } else {
+            chip.setBackgroundResource(R.drawable.white_full_corner_bg);
+        }
         chip.setTextColor(selected ? selectedText : unselectedText);
     }
 
