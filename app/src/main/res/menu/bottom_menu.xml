@@ -3,26 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="Trang Chủ"
         android:icon="@drawable/btn_1"
-        app:cnb_backgroundColor="@color/orange"
+        app:cnb_backgroundColor="@color/primary"
         app:cnb_iconColor="@color/white"/>
     <item
         android:id="@+id/favorites"
-        android:title="Favorite"
+        android:title="Yêu Thích"
         android:icon="@drawable/btn_2"
-        app:cnb_backgroundColor="@color/orange"
+        app:cnb_backgroundColor="@color/primary"
         app:cnb_iconColor="@color/white"/>
     <item
         android:id="@+id/my_order"
-        android:title="My Order"
+        android:title="Đơn Hàng"
         android:icon="@drawable/btn_3"
-        app:cnb_backgroundColor="@color/orange"
+        app:cnb_backgroundColor="@color/primary"
         app:cnb_iconColor="@color/white"/>
     <item
         android:id="@+id/profile"
-        android:title="Setting"
+        android:title="Cài Đặt"
         android:icon="@drawable/btn_4"
-        app:cnb_backgroundColor="@color/orange"
+        app:cnb_backgroundColor="@color/primary"
         app:cnb_iconColor="@color/white"/>
 </menu>

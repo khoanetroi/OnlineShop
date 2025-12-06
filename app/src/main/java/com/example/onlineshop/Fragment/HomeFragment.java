@@ -44,30 +44,74 @@ public class HomeFragment extends Fragment {
         userPreferences = new UserPreferences(requireContext());
         viewModel = new MainViewModel();
         
+        initUserGreeting();
         initCategory();
         initSlider();
         initPopular();
+        initNewArrivals();
+        initRecommended();
         setVariable();
+    }
+    
+    private void initUserGreeting() {
+        // Get username from UserPreferences and display it
+        String userName = userPreferences.getUserName();
+        if (userName != null && !userName.isEmpty()) {
+            binding.textView5.setText(userName);
+        } else {
+            // Fallback to email if name is not available
+            String userEmail = userPreferences.getUserEmail();
+            if (userEmail != null && !userEmail.isEmpty()) {
+                // Extract name from email (before @)
+                String nameFromEmail = userEmail.split("@")[0];
+                // Capitalize first letter
+                nameFromEmail = nameFromEmail.substring(0, 1).toUpperCase() + nameFromEmail.substring(1);
+                binding.textView5.setText(nameFromEmail);
+            } else {
+                binding.textView5.setText("Khách");
+            }
+        }
     }
 
     private void setVariable() {
-        binding.imageView5.setOnClickListener(v -> {
-            if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
-                com.example.onlineshop.Activity.MainContainerActivity activity = 
-                    (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
-                activity.navigateToMyCart();
-            }
-        });
-        binding.imageView4.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
-            startActivity(intent);
-        });
-        binding.imageView6.setOnClickListener(v -> {
+        // Profile image click - navigate to profile
+        binding.imageView2.setOnClickListener(v -> {
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
                     (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
                 activity.navigateToFragment(R.id.profile);
             }
+        });
+
+        // Search bar click - navigate to search activity
+        binding.editTextText.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.SearchActivity.class);
+            startActivity(intent);
+        });
+        
+        binding.editTextText.setFocusable(false);
+        binding.editTextText.setFocusableInTouchMode(false);
+
+        // See All buttons
+        binding.seeAllPopular.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.ProductListActivity.class);
+            intent.putExtra("listType", "popular");
+            intent.putExtra("title", "Sản Phẩm Phổ Biến");
+            startActivity(intent);
+        });
+
+        binding.seeAllNewArrivals.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.ProductListActivity.class);
+            intent.putExtra("listType", "new_arrivals");
+            intent.putExtra("title", "Hàng Mới Về");
+            startActivity(intent);
+        });
+
+        binding.seeAllRecommended.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.ProductListActivity.class);
+            intent.putExtra("listType", "recommended");
+            intent.putExtra("title", "Gợi Ý Cho Bạn");
+            startActivity(intent);
         });
     }
 
@@ -80,6 +124,30 @@ public class HomeFragment extends Fragment {
                 binding.popularView.setNestedScrollingEnabled(true);
             }
             binding.progressBarPopular.setVisibility(View.GONE);
+        });
+    }
+
+    private void initNewArrivals() {
+        binding.progressBarNewArrivals.setVisibility(View.VISIBLE);
+        viewModel.loadNewArrivals().observeForever(itemsModels -> {
+            if(itemsModels != null && !itemsModels.isEmpty()) {
+                binding.newArrivalsView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+                binding.newArrivalsView.setAdapter(new PopularAdapter(itemsModels));
+                binding.newArrivalsView.setNestedScrollingEnabled(true);
+            }
+            binding.progressBarNewArrivals.setVisibility(View.GONE);
+        });
+    }
+
+    private void initRecommended() {
+        binding.progressBarRecommended.setVisibility(View.VISIBLE);
+        viewModel.loadRecommended().observeForever(itemsModels -> {
+            if(itemsModels != null && !itemsModels.isEmpty()) {
+                binding.recommendedView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+                binding.recommendedView.setAdapter(new PopularAdapter(itemsModels));
+                binding.recommendedView.setNestedScrollingEnabled(true);
+            }
+            binding.progressBarRecommended.setVisibility(View.GONE);
         });
     }
 

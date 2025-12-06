@@ -66,10 +66,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
         holder.binding.numberItemTxt.setText(String.valueOf(item.getNumberinCart()));
         
         if (item.getColor() != null && !item.getColor().isEmpty()) {
-            String colorText = "Color: " + item.getColor().get(0);
+            String colorText = "Màu: " + item.getColor().get(0);
             holder.binding.colorTxt.setText(colorText);
         } else {
-            holder.binding.colorTxt.setText("Color: N/A");
+            holder.binding.colorTxt.setText("Màu: Không có");
         }
         
         double totalPrice = item.getPrice() * item.getNumberinCart();

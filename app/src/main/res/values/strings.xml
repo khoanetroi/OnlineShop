@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">OnlineShop</string>
-    <string name="title_splash"><font color="#dc6f31">Your Shoping</font> Destination \nFor Everything</string>
-    <string name="subtitle_splash">Get personalized recommendations \nEnjoy fast, free shipping</string>
-    <string name="signin">Already have an account? <font color="#dc6f31">SignIn</font></string>
-    <string name="profile_image">Profile Image</string>
-    <string name="cart_icon">Cart Icon</string>
-    <string name="bell_icon">Notification Bell</string>
-    <string name="settings_icon">Settings Icon</string>
-    <string name="back">Back</string>
-    <string name="favorite">Favorite</string>
+    <string name="app_name">Cửa Hàng Trực Tuyến</string>
+    <string name="title_splash"><font color="#dc6f31">Điểm Đến Mua Sắm</font> Của Bạn \nCho Mọi Thứ</string>
+    <string name="subtitle_splash">Nhận gợi ý cá nhân hóa \nTận hưởng giao hàng nhanh, miễn phí</string>
+    <string name="signin">Đã có tài khoản? <font color="#dc6f31">Đăng Nhập</font></string>
+    <string name="profile_image">Ảnh Đại Diện</string>
+    <string name="cart_icon">Biểu Tượng Giỏ Hàng</string>
+    <string name="bell_icon">Chuông Thông Báo</string>
+    <string name="settings_icon">Biểu Tượng Cài Đặt</string>
+    <string name="back">Quay Lại</string>
+    <string name="favorite">Yêu Thích</string>
 </resources>

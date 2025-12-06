@@ -98,7 +98,7 @@ public class PaymentActivity extends AppCompatActivity {
         binding.productsView.setAdapter(new PaymentProductAdapter(items));
         
         if (binding.productsLabelTxt != null) {
-            binding.productsLabelTxt.setText("Products (" + items.size() + ")");
+            binding.productsLabelTxt.setText("Sản Phẩm (" + items.size() + ")");
         }
     }
 
@@ -125,8 +125,8 @@ public class PaymentActivity extends AppCompatActivity {
         paymentMethodBottomSheet.setContentView(bottomSheetBinding.getRoot());
         
         List<PaymentMethodAdapter.PaymentMethod> paymentMethods = Arrays.asList(
-            new PaymentMethodAdapter.PaymentMethod("Master Card", R.drawable.master_card),
-            new PaymentMethodAdapter.PaymentMethod("Visa", R.drawable.visa),
+            new PaymentMethodAdapter.PaymentMethod("Thẻ Master Card", R.drawable.master_card),
+            new PaymentMethodAdapter.PaymentMethod("Thẻ Visa", R.drawable.visa),
             new PaymentMethodAdapter.PaymentMethod("PayPal", R.drawable.paypal)
         );
         
@@ -145,7 +145,7 @@ public class PaymentActivity extends AppCompatActivity {
                 updateSelectedPaymentMethod(selected);
                 paymentMethodBottomSheet.dismiss();
             } else {
-                Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -162,7 +162,7 @@ public class PaymentActivity extends AppCompatActivity {
     }
     
     private void updatePaymentMethodPlaceholder() {
-        binding.selectedPaymentNameTxt.setText("Select Payment Method");
+        binding.selectedPaymentNameTxt.setText("Chọn Phương Thức Thanh Toán");
         binding.selectedPaymentIcon.setVisibility(View.INVISIBLE);
         updateCheckoutButtonState(false);
     }
@@ -194,20 +194,20 @@ public class PaymentActivity extends AppCompatActivity {
 
     private void placeOrder() {
         if (selectedPaymentMethod == null) {
-            Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
             return;
         }
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser == null) {
-            Toast.makeText(this, "Please login to place an order", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng đăng nhập để đặt hàng", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String uid = firebaseUser.getUid();
 
         if (items == null || items.isEmpty()) {
-            Toast.makeText(this, "Your cart is empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Giỏ hàng của bạn trống", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -227,7 +227,7 @@ public class PaymentActivity extends AppCompatActivity {
         if (orderId == null) {
             binding.progressBar.setVisibility(View.GONE);
             binding.checkoutNowBtn.setEnabled(true);
-            Toast.makeText(this, "Failed to create order", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Không thể tạo đơn hàng", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -240,7 +240,7 @@ public class PaymentActivity extends AppCompatActivity {
                 delivery,
                 total,
                 currentTime,
-                "On Progress",
+                "Đang Xử Lý",
                 items
         );
         
@@ -254,7 +254,7 @@ public class PaymentActivity extends AppCompatActivity {
 
                     managmentCart.clearCart();
 
-                    Toast.makeText(PaymentActivity.this, "Order placed successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentActivity.this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
                     
                     Intent intent = new Intent(PaymentActivity.this, MainContainerActivity.class);
                     intent.putExtra("select_my_order", true);
@@ -266,7 +266,7 @@ public class PaymentActivity extends AppCompatActivity {
                     binding.progressBar.setVisibility(View.GONE);
                     updateCheckoutButtonState(true);
                     
-                    String errorMessage = "Failed to place order";
+                    String errorMessage = "Không thể đặt hàng";
                     if (e.getMessage() != null) {
                         errorMessage += ": " + e.getMessage();
                     }

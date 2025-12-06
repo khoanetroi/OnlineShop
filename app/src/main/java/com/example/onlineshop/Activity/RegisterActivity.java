@@ -51,43 +51,43 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmPassword = binding.confirmPasswordEdt.getText().toString().trim();
 
         if (TextUtils.isEmpty(name)) {
-            binding.nameEdt.setError("Name is required");
+            binding.nameEdt.setError("Họ và tên là bắt buộc");
             binding.nameEdt.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(email)) {
-            binding.emailEdt.setError("Email is required");
+            binding.emailEdt.setError("Email là bắt buộc");
             binding.emailEdt.requestFocus();
             return;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.emailEdt.setError("Please enter a valid email");
+            binding.emailEdt.setError("Vui lòng nhập email hợp lệ");
             binding.emailEdt.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            binding.passwordEdt.setError("Password is required");
+            binding.passwordEdt.setError("Mật khẩu là bắt buộc");
             binding.passwordEdt.requestFocus();
             return;
         }
 
         if (password.length() < 6) {
-            binding.passwordEdt.setError("Password must be at least 6 characters");
+            binding.passwordEdt.setError("Mật khẩu phải có ít nhất 6 ký tự");
             binding.passwordEdt.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(confirmPassword)) {
-            binding.confirmPasswordEdt.setError("Please confirm your password");
+            binding.confirmPasswordEdt.setError("Vui lòng xác nhận mật khẩu");
             binding.confirmPasswordEdt.requestFocus();
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            binding.confirmPasswordEdt.setError("Passwords do not match");
+            binding.confirmPasswordEdt.setError("Mật khẩu không khớp");
             binding.confirmPasswordEdt.requestFocus();
             return;
         }
@@ -105,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
                     result.user.getEmail(),
                     result.user.getName()
                 );
-                Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RegisterActivity.this, MainContainerActivity.class));
                 finish();
             } else {

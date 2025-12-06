@@ -15,6 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnlineShop">
         <activity
+            android:name=".Activity.ProductListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
             android:name=".Activity.NotificationActivity"
             android:exported="false" />
         <activity

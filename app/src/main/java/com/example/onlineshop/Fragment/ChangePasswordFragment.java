@@ -80,32 +80,32 @@ public class ChangePasswordFragment extends Fragment {
         String confirmPassword = binding.confirmPasswordEdt.getText().toString().trim();
 
         if (TextUtils.isEmpty(newPassword)) {
-            binding.newPasswordEdt.setError("New password is required");
+            binding.newPasswordEdt.setError("Mật khẩu mới là bắt buộc");
             return;
         } else {
             binding.newPasswordEdt.setError(null);
         }
 
         if (TextUtils.isEmpty(confirmPassword)) {
-            binding.confirmPasswordEdt.setError("Please confirm password");
+            binding.confirmPasswordEdt.setError("Vui lòng xác nhận mật khẩu");
             return;
         } else {
             binding.confirmPasswordEdt.setError(null);
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            binding.confirmPasswordEdt.setError("Passwords do not match");
+            binding.confirmPasswordEdt.setError("Mật khẩu không khớp");
             return;
         }
 
         if (newPassword.length() < 6) {
-            binding.newPasswordEdt.setError("Password must be at least 6 characters");
+            binding.newPasswordEdt.setError("Mật khẩu phải có ít nhất 6 ký tự");
             return;
         }
 
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user == null) {
-            Toast.makeText(requireContext(), "You need to be logged in to change password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Bạn cần đăng nhập để đổi mật khẩu", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -118,12 +118,12 @@ public class ChangePasswordFragment extends Fragment {
                     binding.changeBtn.setEnabled(true);
 
                     if (task.isSuccessful()) {
-                        Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), "Cập nhật mật khẩu thành công", Toast.LENGTH_SHORT).show();
                         if (getActivity() != null) {
                             getActivity().onBackPressed();
                         }
                     } else {
-                        String message = task.getException() != null ? task.getException().getMessage() : "Failed to update password";
+                        String message = task.getException() != null ? task.getException().getMessage() : "Không thể cập nhật mật khẩu";
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
                     }
                 });

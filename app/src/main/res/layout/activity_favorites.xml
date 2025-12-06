@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lighter_gray"
+    android:background="@color/background"
     tools:context=".Fragment.FavoritesFragment">
 
     <LinearLayout
@@ -26,18 +26,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="My Favorite"
-            android:textColor="@color/black"
+            android:text="Yêu Thích"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/cartBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:contentDescription="@string/cart_icon"
-            app:srcCompat="@drawable/cart_icon" />
 
         <ImageView
             android:id="@+id/notificationBtn"
@@ -69,7 +61,7 @@
             android:drawableStart="@drawable/search_icon"
             android:drawablePadding="8dp"
             android:ems="10"
-            android:hint="Search something..."
+            android:hint="Tìm kiếm..."
             android:inputType="text"
             android:paddingHorizontal="16dp" />
 
@@ -104,10 +96,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/orange_bg"
+                android:background="@drawable/chip_selected_bg"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="All"
+                android:text="Tất Cả"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -120,8 +112,8 @@
                 android:background="@drawable/white_full_corner_bg"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="Latest"
-                android:textColor="@color/dark_gray"
+                android:text="Mới Nhất"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -132,8 +124,8 @@
                 android:background="@drawable/white_full_corner_bg"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="Most Popular"
-                android:textColor="@color/dark_gray"
+                android:text="Phổ Biến"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -143,8 +135,8 @@
                 android:background="@drawable/white_full_corner_bg"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
-                android:text="Cheapest"
-                android:textColor="@color/dark_gray"
+                android:text="Rẻ Nhất"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -164,8 +156,8 @@
         android:id="@+id/emptyTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No favorites yet"
-        android:textColor="@color/dark_gray"
+            android:text="Chưa có sản phẩm yêu thích"
+        android:textColor="@color/text_secondary"
         android:textSize="16sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/favoriteView"
@@ -193,7 +185,7 @@
         app:cnb_menuResource="@menu/bottom_menu"
         app:cnb_orientationMode="horizontal"
         app:cnb_radius="50dp"
-        app:cnb_unselectedColor="@color/black"
+        app:cnb_unselectedColor="@color/text_secondary"
         app:cnb_iconColor="@color/white"
         app:cnb_iconSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"

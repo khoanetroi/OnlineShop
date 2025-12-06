@@ -106,7 +106,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         holder.binding.ratingTxt.setText("(" + item.getRating() + ")");
         holder.binding.oldPriceTxt.setText("$" + String.format("%.2f", item.getOldPrice()));
         if (item.getOffPercent() != null) {
-            holder.binding.offPercentTxt.setText(item.getOffPercent() + " Off");
+            holder.binding.offPercentTxt.setText(item.getOffPercent() + " Giảm");
         }
         holder.binding.oldPriceTxt.setPaintFlags(holder.binding.oldPriceTxt.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -150,7 +150,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             } catch (Exception e) {
                 android.util.Log.e("PopularAdapter", "Error in favBtn click listener", e);
                 if (context != null) {
-                    Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -172,6 +172,83 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                 }
             }
         });
+
+        // Add to Cart button click
+        holder.binding.addToCartBtn.setOnClickListener(v -> {
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION || adapterPosition >= items.size()) {
+                return;
+            }
+            
+            ItemsModel clickedItem = items.get(adapterPosition);
+            if (clickedItem != null) {
+                addToCart(clickedItem);
+            }
+        });
+    }
+
+    private void addToCart(ItemsModel item) {
+        if (context == null || item == null) return;
+        
+        DatabaseReference cartRef = getCartRef();
+        if (cartRef == null) {
+            Toast.makeText(context, "Vui lòng đăng nhập để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String itemKey = item.getTitle().replaceAll("[.#$\\[\\]]", "_");
+        
+        cartRef.child(itemKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // Item already in cart, increase quantity
+                    Long currentQty = snapshot.child("quantity").getValue(Long.class);
+                    int newQty = (currentQty != null ? currentQty.intValue() : 0) + 1;
+                    cartRef.child(itemKey).child("quantity").setValue(newQty);
+                    Toast.makeText(context, "Đã cập nhật số lượng trong giỏ hàng", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Add new item to cart
+                    java.util.HashMap<String, Object> cartItem = new java.util.HashMap<>();
+                    cartItem.put("title", item.getTitle());
+                    cartItem.put("price", item.getPrice());
+                    cartItem.put("oldPrice", item.getOldPrice());
+                    cartItem.put("picUrl", item.getPicUrl());
+                    cartItem.put("quantity", 1);
+                    cartItem.put("selectedColor", item.getColor() != null && !item.getColor().isEmpty() ? item.getColor().get(0) : "");
+                    cartItem.put("selectedSize", item.getSize() != null && !item.getSize().isEmpty() ? item.getSize().get(0) : "");
+                    
+                    cartRef.child(itemKey).setValue(cartItem);
+                    Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(context, "Lỗi khi thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private DatabaseReference getCartRef() {
+        if (context == null) return null;
+        
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            return FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid()).child("cart");
+        }
+        
+        try {
+            UserPreferences userPreferences = new UserPreferences(context);
+            String uid = userPreferences.getUserId();
+            if (uid != null && !uid.isEmpty()) {
+                return FirebaseDatabase.getInstance().getReference("Users").child(uid).child("cart");
+            }
+        } catch (Exception e) {
+            android.util.Log.e("PopularAdapter", "Error getting cart ref", e);
+        }
+        
+        return null;
     }
 
     private void checkFavoriteStatus(ItemsModel item, ViewHolder holder) {
@@ -268,12 +345,12 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
 
         DatabaseReference wishlistRef = getWishlistRef();
         if (wishlistRef == null) {
-            Toast.makeText(context, "Please login to add favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Vui lòng đăng nhập để thêm yêu thích", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (item == null || item.getTitle() == null || item.getTitle().isEmpty()) {
-            Toast.makeText(context, "Invalid item", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -307,11 +384,11 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                                                     holder.binding.favBtn.setImageResource(R.drawable.heart);
                                                 }
                                                 if (context != null) {
-                                                    Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
                                                 }
                                             } else {
                                                 if (context != null) {
-                                                    Toast.makeText(context, "Failed to remove favorite", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(context, "Không thể xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
                                                 }
                                                 android.util.Log.e("PopularAdapter", "Remove favorite error", task.getException());
                                             }
@@ -336,7 +413,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                                             holder.binding.favBtn.setImageResource(R.drawable.red_heart);
                                         }
                                         if (context != null) {
-                                            Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
                                         }
                                     } catch (Exception ex) {
                                         android.util.Log.e("PopularAdapter", "Error in add success callback", ex);
@@ -346,7 +423,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                                 updateUIOnMainThread(() -> {
                                     try {
                                         if (context != null) {
-                                            Toast.makeText(context, "Failed to add favorite: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(context, "Không thể thêm yêu thích: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                         }
                                         android.util.Log.e("PopularAdapter", "Add favorite error", e);
                                     } catch (Exception ex) {
@@ -359,7 +436,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                         android.util.Log.e("PopularAdapter", "Error toggling favorite", e);
                         updateUIOnMainThread(() -> {
                             if (context != null) {
-                                Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -370,7 +447,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
                     updateUIOnMainThread(() -> {
                         try {
                             if (context != null) {
-                                Toast.makeText(context, "Failed to update favorites: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Không thể cập nhật yêu thích: " + error.getMessage(), Toast.LENGTH_LONG).show();
                             }
                             android.util.Log.e("PopularAdapter", "Firebase error: " + error.getMessage(), error.toException());
                         } catch (Exception e) {
@@ -383,7 +460,7 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             android.util.Log.e("PopularAdapter", "Error in toggleFavorite", e);
             updateUIOnMainThread(() -> {
                 if (context != null) {
-                    Toast.makeText(context, "An error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Đã xảy ra lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

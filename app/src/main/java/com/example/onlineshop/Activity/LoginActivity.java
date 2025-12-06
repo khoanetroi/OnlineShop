@@ -53,19 +53,19 @@ public class LoginActivity extends AppCompatActivity {
         String password = binding.passwordEdt.getText().toString().trim();
 
         if (TextUtils.isEmpty(email)) {
-            binding.emailEdt.setError("Email is required");
+            binding.emailEdt.setError("Email là bắt buộc");
             binding.emailEdt.requestFocus();
             return;
         }
 
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.emailEdt.setError("Please enter a valid email");
+            binding.emailEdt.setError("Vui lòng nhập email hợp lệ");
             binding.emailEdt.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            binding.passwordEdt.setError("Password is required");
+            binding.passwordEdt.setError("Mật khẩu là bắt buộc");
             binding.passwordEdt.requestFocus();
             return;
         }
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     result.user.getEmail(),
                     result.user.getName()
                 );
-                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainContainerActivity.class));
                 finish();
             } else {

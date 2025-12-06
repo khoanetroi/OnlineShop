@@ -5,64 +5,77 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".Activity.SplashActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
                 app:srcCompat="@drawable/splash_pic3" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/title_splash"
                 android:textAlignment="center"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="31sp"/>
+                android:textColor="@color/text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="16dp"
+                android:lineSpacingExtra="6dp"
                 android:text="@string/subtitle_splash"
                 android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_marginTop="18sp"
-                android:lineSpacingExtra="10dp"/>
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp" />
 
             <androidx.appcompat.widget.AppCompatButton
-                style="@android:style/Widget.Button"
-                android:layout_margin="32dp"
                 android:id="@+id/startBtn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Let's Get Started"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="32dp"
                 android:background="@drawable/orange_bg"
-                android:textSize="18sp"
-                android:textColor="@color/white"/>
+                android:text="Bắt Đầu"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="@string/signin"
                 android:textAlignment="center"
-                android:textSize="18sp"/>
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

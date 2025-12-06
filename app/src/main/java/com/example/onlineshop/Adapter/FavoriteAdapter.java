@@ -116,14 +116,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                         }
 
                         if (wishlistRef == null) {
-                            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Người dùng chưa đăng nhập", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         removeFromWishlist(item, adapterPosition);
                     } catch (Exception e) {
                         android.util.Log.e("FavoriteAdapter", "Error in fav button click", e);
-                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Đã xảy ra lỗi", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -134,12 +134,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
     private void removeFromWishlist(ItemsModel item, int position) {
         if (wishlistRef == null) {
-            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Người dùng chưa đăng nhập", Toast.LENGTH_SHORT).show();
             return;
         }
         
         if (item == null || item.getTitle() == null || item.getTitle().isEmpty()) {
-            Toast.makeText(context, "Invalid item", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
         
@@ -148,26 +148,26 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
-                        Toast.makeText(context, "Item not found in favorites", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Không tìm thấy sản phẩm trong yêu thích", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
                     for (DataSnapshot child : snapshot.getChildren()) {
                         child.getRef().removeValue().addOnSuccessListener(unused -> {
-                            Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
                         }).addOnFailureListener(e -> {
-                            Toast.makeText(context, "Failed to remove favorite: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Không thể xóa khỏi yêu thích: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(context, "Failed to update favorites: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Không thể cập nhật yêu thích: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (Exception e) {
-            Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

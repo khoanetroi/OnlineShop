@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Settings"
+                    android:text="Cài Đặt"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="32dp"
-                android:text="General"
+                android:text="Chung"
                 android:textColor="@color/dark_gray"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Edit Profile"
+                    android:text="Chỉnh Sửa Hồ Sơ"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Change Password"
+                    android:text="Đổi Mật Khẩu"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Notifications"
+                    android:text="Thông Báo"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Security"
+                    android:text="Bảo Mật"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -198,7 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Language"
+                    android:text="Ngôn Ngữ"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -206,7 +206,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="English"
+                    android:text="Tiếng Việt"
                     android:textColor="@color/dark_gray"
                     android:textSize="15sp" />
 
@@ -222,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="32dp"
-                android:text="Preferences"
+                android:text="Tùy Chọn"
                 android:textColor="@color/dark_gray"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -248,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Legal and Policies"
+                    android:text="Pháp Lý và Chính Sách"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -279,7 +279,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Help &amp; Support"
+                    android:text="Trợ Giúp &amp; Hỗ Trợ"
                     android:textColor="@color/black"
                     android:textSize="15sp" />
 
@@ -311,7 +311,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Logout"
+                    android:text="Đăng Xuất"
                     android:textColor="@color/red"
                     android:textSize="15sp"
                     android:textStyle="bold" />

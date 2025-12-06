@@ -75,12 +75,12 @@ public class EditProfileFragment extends Fragment {
         String phone = binding.phoneEdt.getText().toString().trim();
 
         if (TextUtils.isEmpty(name)) {
-            binding.nameEdt.setError("Name is required");
+            binding.nameEdt.setError("Họ và tên là bắt buộc");
             return;
         }
 
         if (currentUser == null) {
-            Toast.makeText(requireContext(), "User data not loaded", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Dữ liệu người dùng chưa được tải", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -100,12 +100,12 @@ public class EditProfileFragment extends Fragment {
                     currentUser.getEmail(),
                     currentUser.getName()
                 );
-                Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Cập nhật hồ sơ thành công", Toast.LENGTH_SHORT).show();
                 if (getActivity() != null) {
                     getActivity().onBackPressed();
                 }
             } else {
-                Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Không thể cập nhật hồ sơ", Toast.LENGTH_SHORT).show();
             }
         });
     }

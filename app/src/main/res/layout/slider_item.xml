@@ -5,7 +5,7 @@
     android:minHeight="150dp"
     android:id="@+id/imageSlide"
     android:scaleType="centerCrop"
-    app:shapeAppearanceOverlay="@style/circleImageView"
+    app:shapeAppearanceOverlay="@style/BannerImageView"
 
     android:layout_height="match_parent">
 

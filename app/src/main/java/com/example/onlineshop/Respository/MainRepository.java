@@ -84,6 +84,50 @@ public class MainRepository {
         return listData;
     }
 
+    public LiveData<ArrayList<ItemsModel>> loadNewArrivals() {
+        MutableLiveData<ArrayList<ItemsModel>> listData = new MutableLiveData<>();
+        DatabaseReference ref = firebaseDatabase.getReference("Items");
+        // Get items sorted by newest (assuming items have a timestamp or we just reverse the list)
+        ref.limitToLast(10).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<ItemsModel> list = new ArrayList<>();
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    ItemsModel item = childSnapshot.getValue(ItemsModel.class);
+                    if (item != null) list.add(0, item); // Add to beginning for reverse order
+                }
+                listData.setValue(list);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        return listData;
+    }
+
+    public LiveData<ArrayList<ItemsModel>> loadRecommended() {
+        MutableLiveData<ArrayList<ItemsModel>> listData = new MutableLiveData<>();
+        DatabaseReference ref = firebaseDatabase.getReference("Items");
+        // Get items with high ratings
+        ref.orderByChild("rating").startAt(4.0).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<ItemsModel> list = new ArrayList<>();
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    ItemsModel item = childSnapshot.getValue(ItemsModel.class);
+                    if (item != null) list.add(item);
+                }
+                listData.setValue(list);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        return listData;
+    }
+
     public LiveData<AppSettingsModel> loadAppSettings() {
         MutableLiveData<AppSettingsModel> settingsData = new MutableLiveData<>();
         DatabaseReference ref = firebaseDatabase.getReference("AppSettings");

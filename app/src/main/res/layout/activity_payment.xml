@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lighter_gray"
+    android:background="@color/background"
     tools:context=".Activity.PaymentActivity">
 
     <ScrollView
@@ -42,8 +42,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Payment"
-                    android:textColor="@color/black"
+                    android:text="Thanh Toán"
+                    android:textColor="@color/text_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -58,8 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Products"
-                android:textColor="@color/dark_gray"
+                android:text="Sản Phẩm"
+                android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,8 +91,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Payment Method"
-                    android:textColor="@color/dark_gray"
+                    android:text="Phương Thức Thanh Toán"
+                    android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
@@ -117,8 +117,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
-                        android:text="Select Payment Method"
-                        android:textColor="@color/black"
+                        android:text="Chọn Phương Thức Thanh Toán"
+                        android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -127,7 +127,7 @@
                         android:layout_height="24dp"
                         android:src="@android:drawable/ic_menu_more"
                         android:contentDescription="Select payment method"
-                        app:tint="@color/orange" />
+                        app:tint="@color/primary" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -155,8 +155,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Subtotal"
-                        android:textColor="@color/dark_gray"
+                        android:text="Tạm Tính"
+                        android:textColor="@color/text_secondary"
                         android:textSize="13sp" />
 
                     <TextView
@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -179,8 +179,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Tax &amp; Shipping"
-                        android:textColor="@color/dark_gray"
+                        android:text="Thuế &amp; Vận Chuyển"
+                        android:textColor="@color/text_secondary"
                         android:textSize="13sp" />
 
                     <TextView
@@ -188,7 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -208,8 +208,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Total amount"
-                        android:textColor="@color/black"
+                        android:text="Tổng Cộng"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -218,7 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00"
-                        android:textColor="@color/black"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -241,7 +241,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/orange_bg"
-                android:text="CHECKOUT NOW"
+                android:text="THANH TOÁN NGAY"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"

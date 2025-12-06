@@ -90,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
         
         binding.originalPriceTxt.setPaintFlags(binding.originalPriceTxt.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
         
-        String ratingText = String.format("%.1f (%d Review)", object.getRating(), object.getReview());
+        String ratingText = String.format("%.1f (%d Đánh Giá)", object.getRating(), object.getReview());
         binding.ratingTxt.setText(ratingText);
         
         binding.descriptionTxt.setText(object.getDescription());
@@ -111,17 +111,17 @@ public class DetailActivity extends AppCompatActivity {
         binding.readMoreTxt.setOnClickListener(v -> {
             if (binding.descriptionTxt.getMaxLines() == 3) {
                 binding.descriptionTxt.setMaxLines(Integer.MAX_VALUE);
-                binding.readMoreTxt.setText("Read Less");
+                binding.readMoreTxt.setText("Thu Gọn");
             } else {
                 binding.descriptionTxt.setMaxLines(3);
-                binding.readMoreTxt.setText("Read More");
+                binding.readMoreTxt.setText("Đọc Thêm");
             }
         });
 
         binding.addToCartBtn.setOnClickListener(v -> {
             object.setNumberinCart(numberOrder);
             managmentCart.insertItem(object);
-            Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
         });
 
         binding.backBtn.setOnClickListener(v -> {
@@ -162,7 +162,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void toggleFavorite() {
         if (wishlistRef == null) {
-            Toast.makeText(this, "Please login to use favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng yêu thích", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -177,7 +177,7 @@ public class DetailActivity extends AppCompatActivity {
                     }
                     isFavorite = false;
                     updateFavIcon();
-                    Toast.makeText(DetailActivity.this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailActivity.this, "Đã xóa khỏi yêu thích", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -188,7 +188,7 @@ public class DetailActivity extends AppCompatActivity {
             wishlistRef.push().setValue(object).addOnSuccessListener(unused -> {
                 isFavorite = true;
                 updateFavIcon();
-                Toast.makeText(DetailActivity.this, "Added to favorites", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, "Đã thêm vào yêu thích", Toast.LENGTH_SHORT).show();
             });
         }
     }

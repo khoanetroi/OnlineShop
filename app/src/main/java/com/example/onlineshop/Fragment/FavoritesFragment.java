@@ -119,14 +119,6 @@ public class FavoritesFragment extends Fragment {
             applyFilterAndSort();
         });
 
-        binding.cartBtn.setOnClickListener(v -> {
-            if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
-                com.example.onlineshop.Activity.MainContainerActivity activity = 
-                    (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
-                activity.navigateToMyCart();
-            }
-        });
-
         binding.notificationBtn.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
             startActivity(intent);

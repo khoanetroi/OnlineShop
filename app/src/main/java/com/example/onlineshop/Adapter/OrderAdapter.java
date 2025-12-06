@@ -67,22 +67,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
         holder.binding.productTitleTxt.setText(firstItem.getTitle());
 
         if (firstItem.getColor() != null && !firstItem.getColor().isEmpty()) {
-            String colorText = "Color: " + firstItem.getColor().get(0);
+            String colorText = "Màu: " + firstItem.getColor().get(0);
             holder.binding.productColorTxt.setText(colorText);
         } else {
-            holder.binding.productColorTxt.setText("Color: N/A");
+            holder.binding.productColorTxt.setText("Màu: Không có");
         }
 
         int totalQty = 0;
         for (com.example.onlineshop.Domain.ItemsModel item : order.getItems()) {
             totalQty += item.getNumberinCart();
         }
-        holder.binding.productQtyTxt.setText("Qty: " + totalQty);
+        holder.binding.productQtyTxt.setText("SL: " + totalQty);
 
         String priceText = formatPrice(order.getTotal());
         holder.binding.priceTxt.setText(priceText);
 
-        String status = order.getStatus() != null ? order.getStatus() : "Pending";
+        String status = order.getStatus() != null ? order.getStatus() : "Chờ Xử Lý";
         holder.binding.statusBadge.setText(status);
         
         if (status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered")) {
@@ -93,16 +93,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
             holder.binding.statusBadge.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_blue_dark));
         }
 
-        boolean isCompleted = status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered");
+        boolean isCompleted = status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Delivered") || status.equalsIgnoreCase("Hoàn Thành") || status.equalsIgnoreCase("Đã Giao");
         if (isCompleted) {
-            holder.binding.actionBtn.setText("Received Order");
+            holder.binding.actionBtn.setText("Đã Nhận Hàng");
             holder.binding.actionBtn.setOnClickListener(v -> {
                 if (actionListener != null) {
                     actionListener.onReceiveOrderClick(order);
                 }
             });
         } else {
-            holder.binding.actionBtn.setText("Tracking");
+            holder.binding.actionBtn.setText("Theo Dõi");
             holder.binding.actionBtn.setOnClickListener(v -> {
                 if (actionListener != null) {
                     actionListener.onTrackingClick(order);

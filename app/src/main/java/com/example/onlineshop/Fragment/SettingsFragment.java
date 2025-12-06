@@ -58,19 +58,19 @@ public class SettingsFragment extends Fragment {
         });
 
         binding.securityRow.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Security options coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Tùy chọn bảo mật sắp ra mắt", Toast.LENGTH_SHORT).show()
         );
 
         binding.languageRow.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Language selection coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Lựa chọn ngôn ngữ sắp ra mắt", Toast.LENGTH_SHORT).show()
         );
 
         binding.legalRow.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Legal and policies coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Pháp lý và chính sách sắp ra mắt", Toast.LENGTH_SHORT).show()
         );
 
         binding.helpRow.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Help & support coming soon", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Trợ giúp & hỗ trợ sắp ra mắt", Toast.LENGTH_SHORT).show()
         );
 
         binding.logoutRow.setOnClickListener(v -> showLogoutDialog());
@@ -78,12 +78,12 @@ public class SettingsFragment extends Fragment {
 
     private void showLogoutDialog() {
         new AlertDialog.Builder(requireContext())
-            .setTitle("Logout")
-            .setMessage("Are you sure you want to logout?")
-            .setPositiveButton("Yes", (dialog, which) -> {
+            .setTitle("Đăng Xuất")
+            .setMessage("Bạn có chắc chắn muốn đăng xuất?")
+            .setPositiveButton("Có", (dialog, which) -> {
                 authRepository.logout();
                 userPreferences.clearSession();
-                Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -91,7 +91,7 @@ public class SettingsFragment extends Fragment {
                     getActivity().finish();
                 }
             })
-            .setNegativeButton("No", null)
+            .setNegativeButton("Không", null)
             .show();
     }
 }

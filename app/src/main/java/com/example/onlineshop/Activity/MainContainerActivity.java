@@ -13,7 +13,6 @@ import com.example.onlineshop.Fragment.ChangePasswordFragment;
 import com.example.onlineshop.Fragment.EditProfileFragment;
 import com.example.onlineshop.Fragment.FavoritesFragment;
 import com.example.onlineshop.Fragment.HomeFragment;
-import com.example.onlineshop.Fragment.MyCartFragment;
 import com.example.onlineshop.Fragment.MyOrderFragment;
 import com.example.onlineshop.Fragment.SettingsFragment;
 import com.example.onlineshop.R;
@@ -37,6 +36,9 @@ public class MainContainerActivity extends AppCompatActivity {
             binding.bottomNavigation.setItemSelected(R.id.profile, true);
             loadFragment(new SettingsFragment(), false);
         } else if (getIntent().getBooleanExtra("select_my_order", false)) {
+            binding.bottomNavigation.setItemSelected(R.id.my_order, true);
+            loadFragment(new MyOrderFragment(), false);
+        } else if (getIntent().getBooleanExtra("select_cart", false)) {
             binding.bottomNavigation.setItemSelected(R.id.my_order, true);
             loadFragment(new MyOrderFragment(), false);
         } else {
@@ -69,10 +71,6 @@ public class MainContainerActivity extends AppCompatActivity {
     
     public void navigateToFragment(int navItemId) {
         binding.bottomNavigation.setItemSelected(navItemId, true);
-    }
-
-    public void navigateToMyCart() {
-        loadFragment(new MyCartFragment(), true);
     }
 
     public void navigateToEditProfile() {
