@@ -8,15 +8,14 @@
     android:background="@drawable/white_full_corner_bg"
     android:padding="8dp">
 
-    <!-- Product Image - with padding inside card -->
+    <!-- Product Image - larger with padding -->
     <ImageView
         android:id="@+id/pic"
         android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="130dp"
+        android:layout_margin="4dp"
         android:background="@drawable/grey_bg"
-        android:padding="12dp"
+        android:padding="8dp"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

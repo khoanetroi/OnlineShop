@@ -11,16 +11,21 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.example.onlineshop.Domain.ItemsModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-
+/**
+ * TinyDB is a lightweight library for persisting simple data in Android apps.
+ * It uses SharedPreferences to store data.
+ */
 public class TinyDB {
 
     private SharedPreferences preferences;
@@ -37,7 +42,6 @@ public class TinyDB {
 
     public static boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-
         return Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
@@ -46,11 +50,9 @@ public class TinyDB {
         Bitmap bitmapFromPath = null;
         try {
             bitmapFromPath = BitmapFactory.decodeFile(path);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return bitmapFromPath;
     }
 
@@ -58,7 +60,6 @@ public class TinyDB {
         return lastImagePath;
     }
 
-    
     public String putImage(String theFolder, String theImageName, Bitmap theBitmap) {
         if (theFolder == null || theImageName == null || theBitmap == null)
             return null;
@@ -74,7 +75,6 @@ public class TinyDB {
         return mFullPath;
     }
 
-    
     public boolean putImageWithFullPath(String fullPath, Bitmap theBitmap) {
         return !(fullPath == null || theBitmap == null) && saveBitmap(fullPath, theBitmap);
     }
@@ -92,7 +92,6 @@ public class TinyDB {
         return mFolder.getPath() + '/' + imageName;
     }
 
-    
     private boolean saveBitmap(String fullPath, Bitmap bitmap) {
         if (fullPath == null || bitmap == null)
             return false;
@@ -109,7 +108,6 @@ public class TinyDB {
 
         try {
             fileCreated = imageFile.createNewFile();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,18 +116,15 @@ public class TinyDB {
         try {
             out = new FileOutputStream(imageFile);
             bitmapCompressed = bitmap.compress(CompressFormat.PNG, 100, out);
-
         } catch (Exception e) {
             e.printStackTrace();
             bitmapCompressed = false;
-
         } finally {
             if (out != null) {
                 try {
                     out.flush();
                     out.close();
                     streamClosed = true;
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     streamClosed = false;
@@ -140,12 +135,10 @@ public class TinyDB {
         return (fileCreated && bitmapCompressed && streamClosed);
     }
 
-    
     public int getInt(String key) {
         return preferences.getInt(key, 0);
     }
 
-    
     public ArrayList<Integer> getListInt(String key) {
         String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
@@ -157,29 +150,23 @@ public class TinyDB {
         return newList;
     }
 
-    
     public long getLong(String key) {
         return preferences.getLong(key, 0);
     }
 
-    
     public float getFloat(String key) {
         return preferences.getFloat(key, 0);
     }
 
-    
     public double getDouble(String key) {
         String number = getString(key);
-
         try {
             return Double.parseDouble(number);
-
         } catch (NumberFormatException e) {
             return 0;
         }
     }
 
-    
     public ArrayList<Double> getListDouble(String key) {
         String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
@@ -191,7 +178,6 @@ public class TinyDB {
         return newList;
     }
 
-    
     public ArrayList<Long> getListLong(String key) {
         String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
         ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
@@ -203,22 +189,18 @@ public class TinyDB {
         return newList;
     }
 
-    
     public String getString(String key) {
         return preferences.getString(key, "");
     }
 
-    
     public ArrayList<String> getListString(String key) {
         return new ArrayList<String>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
-    
     public boolean getBoolean(String key) {
         return preferences.getBoolean(key, false);
     }
 
-    
     public ArrayList<Boolean> getListBoolean(String key) {
         ArrayList<String> myList = getListString(key);
         ArrayList<Boolean> newList = new ArrayList<Boolean>();
@@ -234,22 +216,41 @@ public class TinyDB {
         return newList;
     }
 
-
     public ArrayList<ItemsModel> getListObject(String key) {
         Gson gson = new Gson();
-
+        String json = preferences.getString(key + "_json", null);
+        if (json != null && !json.isEmpty()) {
+            try {
+                Type listType = new TypeToken<ArrayList<ItemsModel>>(){}.getType();
+                ArrayList<ItemsModel> list = gson.fromJson(json, listType);
+                if (list != null) {
+                    Log.d("TinyDB", "getListObject: loaded " + list.size() + " items from JSON");
+                    return list;
+                }
+            } catch (Exception e) {
+                Log.e("TinyDB", "Error parsing cart JSON: " + e.getMessage());
+            }
+        }
         ArrayList<String> objStrings = getListString(key);
         ArrayList<ItemsModel> playerList = new ArrayList<ItemsModel>();
 
         for (String jObjString : objStrings) {
-            ItemsModel player = gson.fromJson(jObjString, ItemsModel.class);
-            playerList.add(player);
+            try {
+                if (jObjString != null && !jObjString.isEmpty()) {
+                    ItemsModel player = gson.fromJson(jObjString, ItemsModel.class);
+                    if (player != null) {
+                        playerList.add(player);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("TinyDB", "Error parsing item: " + e.getMessage());
+            }
         }
+        Log.d("TinyDB", "getListObject (fallback): loaded " + playerList.size() + " items");
         return playerList;
     }
 
     public <T> T getObject(String key, Class<T> classOfT) {
-
         String json = getString(key);
         Object value = new Gson().fromJson(json, classOfT);
         if (value == null)
@@ -257,72 +258,61 @@ public class TinyDB {
         return (T) value;
     }
 
-    
     public void putInt(String key, int value) {
         checkForNullKey(key);
         preferences.edit().putInt(key, value).apply();
     }
 
-    
     public void putListInt(String key, ArrayList<Integer> intList) {
         checkForNullKey(key);
         Integer[] myIntList = intList.toArray(new Integer[intList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myIntList)).apply();
     }
 
-    
     public void putLong(String key, long value) {
         checkForNullKey(key);
         preferences.edit().putLong(key, value).apply();
     }
 
-    
     public void putListLong(String key, ArrayList<Long> longList) {
         checkForNullKey(key);
         Long[] myLongList = longList.toArray(new Long[longList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myLongList)).apply();
     }
 
-    
     public void putFloat(String key, float value) {
         checkForNullKey(key);
         preferences.edit().putFloat(key, value).apply();
     }
 
-    
     public void putDouble(String key, double value) {
         checkForNullKey(key);
         putString(key, String.valueOf(value));
     }
 
-    
     public void putListDouble(String key, ArrayList<Double> doubleList) {
         checkForNullKey(key);
         Double[] myDoubleList = doubleList.toArray(new Double[doubleList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myDoubleList)).apply();
     }
 
-    
     public void putString(String key, String value) {
         checkForNullKey(key);
         checkForNullValue(value);
         preferences.edit().putString(key, value).apply();
     }
 
-    
     public void putListString(String key, ArrayList<String> stringList) {
         checkForNullKey(key);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 
-    
     public void putBoolean(String key, boolean value) {
         checkForNullKey(key);
         preferences.edit().putBoolean(key, value).apply();
     }
 
-    
     public void putListBoolean(String key, ArrayList<Boolean> boolList) {
         checkForNullKey(key);
         ArrayList<String> newList = new ArrayList<String>();
@@ -338,7 +328,6 @@ public class TinyDB {
         putListString(key, newList);
     }
 
-    
     public void putObject(String key, Object obj) {
         checkForNullKey(key);
         Gson gson = new Gson();
@@ -348,6 +337,9 @@ public class TinyDB {
     public void putListObject(String key, ArrayList<ItemsModel> playerList) {
         checkForNullKey(key);
         Gson gson = new Gson();
+        String json = gson.toJson(playerList);
+        preferences.edit().putString(key + "_json", json).apply();
+        Log.d("TinyDB", "putListObject: saved " + playerList.size() + " items as JSON");
         ArrayList<String> objStrings = new ArrayList<String>();
         for (ItemsModel player : playerList) {
             objStrings.add(gson.toJson(player));
@@ -355,48 +347,38 @@ public class TinyDB {
         putListString(key, objStrings);
     }
 
-    
     public void remove(String key) {
         preferences.edit().remove(key).apply();
     }
 
-    
     public boolean deleteImage(String path) {
         return new File(path).delete();
     }
 
-    
     public void clear() {
         preferences.edit().clear().apply();
     }
 
-    
     public Map<String, ?> getAll() {
         return preferences.getAll();
     }
 
-    
     public void registerOnSharedPreferenceChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {
-
         preferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
-    
     public void unregisterOnSharedPreferenceChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {
-
         preferences.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
-    
     private void checkForNullKey(String key) {
         if (key == null) {
             throw new NullPointerException();
         }
     }
 
-    
     private void checkForNullValue(String value) {
         if (value == null) {
             throw new NullPointerException();

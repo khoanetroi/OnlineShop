@@ -49,7 +49,13 @@ public class SizeAdapter extends RecyclerView.Adapter<SizeAdapter.Viewholder> {
             holder.binding.sizeTxt.setTextColor(context.getResources().getColor(R.color.black));
         }
     }
-
+    
+    public String getSelectedSize() {
+        if (selectedPosition >= 0 && selectedPosition < items.size()) {
+            return items.get(selectedPosition);
+        }
+        return null;
+    }
     @Override
     public int getItemCount() {
         return items.size();

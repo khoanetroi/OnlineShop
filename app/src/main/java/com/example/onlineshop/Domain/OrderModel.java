@@ -1,8 +1,9 @@
 package com.example.onlineshop.Domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class OrderModel {
+public class OrderModel implements Serializable {
     private String orderId;
     private String userId;
     private double subtotal;
@@ -10,7 +11,7 @@ public class OrderModel {
     private double delivery;
     private double total;
     private long createdAt;
-    private long orderDate; // Required by Firebase rules
+    private long orderDate;
     private String status;
     private ArrayList<ItemsModel> items;
 
@@ -26,7 +27,7 @@ public class OrderModel {
         this.delivery = delivery;
         this.total = total;
         this.createdAt = createdAt;
-        this.orderDate = createdAt; // Set orderDate same as createdAt
+        this.orderDate = createdAt;
         this.status = status;
         this.items = items;
     }

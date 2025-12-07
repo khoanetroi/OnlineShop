@@ -272,6 +272,59 @@
       "minPurchase": 150,
       "type": "fixed"
     }
+  },
+  "Users": {
+    "example_user_uid": {
+      "profile": {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "phone": "+1234567890",
+        "avatar": ""
+      },
+      "cart": {
+        "cart_item_1": {
+          "itemId": "item_1",
+          "title": "Summer Dress",
+          "description": "Beautiful summer dress made from high-quality cotton",
+          "price": 29.99,
+          "oldPrice": 39.99,
+          "offPercent": "30",
+          "picUrl": ["https://res.cloudinary.com/dj950jydk/image/upload/v1763298190/summer_dress2_xe0bei.png"],
+          "size": ["S", "M", "L", "XL"],
+          "color": ["Red", "Blue", "Yellow", "White"],
+          "selectedSize": "M",
+          "selectedColor": "Blue",
+          "quantity": 2,
+          "rating": 4.5,
+          "review": 124,
+          "addedAt": 1733558400000,
+          "updatedAt": 1733558400000
+        }
+      },
+      "wishlist": {
+        "wishlist_item_1": {
+          "itemId": "item_2",
+          "title": "Classic T-Shirt",
+          "price": 19.99,
+          "picUrl": ["https://res.cloudinary.com/dj950jydk/image/upload/v1763305573/tshirt1_ibnxek.png"],
+          "addedAt": 1733558400000
+        }
+      },
+      "addresses": {
+        "address_1": {
+          "id": "address_1",
+          "name": "Home",
+          "fullName": "John Doe",
+          "phone": "+1234567890",
+          "address": "123 Main Street",
+          "city": "New York",
+          "state": "NY",
+          "zipCode": "10001",
+          "country": "USA",
+          "isDefault": true
+        }
+      }
+    }
   }
 }
 

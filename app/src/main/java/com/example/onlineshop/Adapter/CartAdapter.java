@@ -36,6 +36,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
         managmentCart = new ManagmentCart(context);
     }
 
+    // Allow fragment/activity to pass the logged-in user id so Firebase cart is updated too
+    public void setUserId(String userId) {
+        if (managmentCart != null) {
+            managmentCart.setUserId(userId);
+        }
+    }
+
     public void setSelectionListener(OnItemSelectionChangedListener listener) {
         this.selectionListener = listener;
     }

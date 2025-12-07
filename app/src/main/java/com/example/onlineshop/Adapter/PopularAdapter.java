@@ -173,16 +173,23 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             }
         });
 
-        // Add to Cart button click
         holder.binding.addToCartBtn.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
             if (adapterPosition == RecyclerView.NO_POSITION || adapterPosition >= items.size()) {
                 return;
             }
-            
+
             ItemsModel clickedItem = items.get(adapterPosition);
             if (clickedItem != null) {
-                addToCart(clickedItem);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("object", clickedItem);
+                context.startActivity(intent);
+                if (context instanceof android.app.Activity) {
+                    ((android.app.Activity) context).overridePendingTransition(
+                            com.example.onlineshop.R.anim.slide_in_right,
+                            com.example.onlineshop.R.anim.slide_out_left
+                    );
+                }
             }
         });
     }
@@ -202,13 +209,11 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Item already in cart, increase quantity
                     Long currentQty = snapshot.child("quantity").getValue(Long.class);
                     int newQty = (currentQty != null ? currentQty.intValue() : 0) + 1;
                     cartRef.child(itemKey).child("quantity").setValue(newQty);
                     Toast.makeText(context, "Đã cập nhật số lượng trong giỏ hàng", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Add new item to cart
                     java.util.HashMap<String, Object> cartItem = new java.util.HashMap<>();
                     cartItem.put("title", item.getTitle());
                     cartItem.put("price", item.getPrice());

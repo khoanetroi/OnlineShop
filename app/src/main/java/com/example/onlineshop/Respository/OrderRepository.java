@@ -74,10 +74,6 @@ public class OrderRepository {
         return listData;
     }
 
-    public LiveData<ArrayList<OrderModel>> loadAllOrders() {
-        return loadOrders();
-    }
-
     public LiveData<ArrayList<OrderModel>> loadInProgressOrders() {
         MutableLiveData<ArrayList<OrderModel>> listData = new MutableLiveData<>();
         

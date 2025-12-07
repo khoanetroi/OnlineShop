@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -15,7 +16,10 @@ import com.example.onlineshop.Adapter.SizeAdapter;
 import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
+import com.example.onlineshop.Respository.CartRepository;
 import com.example.onlineshop.databinding.ActivityDetailBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,8 +33,11 @@ public class DetailActivity extends AppCompatActivity {
     private ItemsModel object;
     private int numberOrder = 1;
     private ManagmentCart managmentCart;
+    private CartRepository cartRepository;
     private DatabaseReference wishlistRef;
     private boolean isFavorite = false;
+    private ColorAdapter colorAdapter;
+    private SizeAdapter sizeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +47,37 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         managmentCart = new ManagmentCart(this);
+        cartRepository = new CartRepository();
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = null;
+        if (firebaseUser != null) {
+            uid = firebaseUser.getUid();
+        } else {
+            UserPreferences userPreferences = new UserPreferences(this);
+            uid = userPreferences.getUserId();
+        }
+        if (uid != null && !uid.isEmpty()) {
+            cartRepository.setUserId(uid);
+        }
+
         initWishlist();
         getBundle();
         initPicList();
         initColor();
         initSize();
+        updateCartBadge();
     }
 
     private void initColor() {
-        binding.recyclerColor.setAdapter(new ColorAdapter(object.getColor()));
+        colorAdapter = new ColorAdapter(object.getColor());
+        binding.recyclerColor.setAdapter(colorAdapter);
         binding.recyclerColor.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
     }
 
     private void initSize() {
-        binding.recyclerSize.setAdapter(new SizeAdapter(object.getSize()));
+        sizeAdapter = new SizeAdapter(object.getSize());
+        binding.recyclerSize.setAdapter(sizeAdapter);
         binding.recyclerSize.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,true));
     }
 
@@ -119,9 +143,56 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         binding.addToCartBtn.setOnClickListener(v -> {
-            object.setNumberinCart(numberOrder);
-            managmentCart.insertItem(object);
-            Toast.makeText(this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+            if (object == null) return;
+            String selectedColor = colorAdapter != null ? colorAdapter.getSelectedColor() : null;
+            String selectedSize = sizeAdapter != null ? sizeAdapter.getSelectedSize() : null;
+
+            ItemsModel cartItem = new ItemsModel();
+            cartItem.setTitle(object.getTitle());
+            cartItem.setDescription(object.getDescription());
+            cartItem.setOffPercent(object.getOffPercent());
+            cartItem.setPicUrl(object.getPicUrl());
+            cartItem.setPrice(object.getPrice());
+            cartItem.setOldPrice(object.getOldPrice());
+            cartItem.setReview(object.getReview());
+            cartItem.setRating(object.getRating());
+            cartItem.setNumberinCart(numberOrder);
+
+            java.util.ArrayList<String> colorList = new java.util.ArrayList<>();
+            if (selectedColor != null) {
+                colorList.add(selectedColor);
+            } else if (object.getColor() != null && !object.getColor().isEmpty()) {
+                colorList.add(object.getColor().get(0));
+            }
+            cartItem.setColor(colorList);
+
+            java.util.ArrayList<String> sizeList = new java.util.ArrayList<>();
+            if (selectedSize != null) {
+                sizeList.add(selectedSize);
+            } else if (object.getSize() != null && !object.getSize().isEmpty()) {
+                sizeList.add(object.getSize().get(0));
+            }
+            cartItem.setSize(sizeList);
+
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null && cartRepository != null && cartRepository.isUserLoggedIn()) {
+                cartRepository.addToCart(cartItem, numberOrder, new CartRepository.OnCartOperationListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(DetailActivity.this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                        updateCartBadge();
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        Toast.makeText(DetailActivity.this, "Lỗi khi thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                managmentCart.insertItem(cartItem);
+                Toast.makeText(this, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                updateCartBadge();
+            }
         });
 
         binding.backBtn.setOnClickListener(v -> {
@@ -138,6 +209,50 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         checkIsFavorite();
+    }
+
+    private void updateCartBadge() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = firebaseUser != null ? firebaseUser.getUid() : null;
+
+        if (userId != null) {
+            DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                    .getReference("Users")
+                    .child(userId)
+                    .child("cart");
+
+            cartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int itemCount = (int) snapshot.getChildrenCount();
+                    updateBadgeUI(itemCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    updateBadgeFromLocalCart();
+                }
+            });
+        } else {
+            updateBadgeFromLocalCart();
+        }
+    }
+
+    private void updateBadgeFromLocalCart() {
+        ManagmentCart managmentCart = new ManagmentCart(this);
+        int itemCount = managmentCart.getListCart().size();
+        updateBadgeUI(itemCount);
+    }
+
+    private void updateBadgeUI(int count) {
+        if (binding != null) {
+            if (count > 0) {
+                binding.cartBadge.setVisibility(android.view.View.VISIBLE);
+                binding.cartBadge.setText(String.valueOf(count > 99 ? "99+" : count));
+            } else {
+                binding.cartBadge.setVisibility(android.view.View.GONE);
+            }
+        }
     }
 
     private void checkIsFavorite() {

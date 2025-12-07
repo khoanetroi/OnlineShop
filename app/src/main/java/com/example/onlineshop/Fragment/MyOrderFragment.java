@@ -1,6 +1,5 @@
 package com.example.onlineshop.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,31 +11,31 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.onlineshop.Adapter.CartAdapter;
 import com.example.onlineshop.Adapter.OrderAdapter;
-import com.example.onlineshop.Domain.AppSettingsModel;
-import com.example.onlineshop.Domain.ItemsModel;
 import com.example.onlineshop.Domain.OrderModel;
-import com.example.onlineshop.Helper.ChangeNumberItemsListener;
 import com.example.onlineshop.Helper.ManagmentCart;
+import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;
-import com.example.onlineshop.Respository.MainRepository;
 import com.example.onlineshop.Respository.OrderRepository;
 import com.example.onlineshop.databinding.ActivityMyOrderBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MyOrderFragment extends Fragment {
     private ActivityMyOrderBinding binding;
     private OrderRepository orderRepository;
-    private MainRepository mainRepository;
     private OrderAdapter orderAdapter;
-    private CartAdapter cartAdapter;
-    private ManagmentCart managmentCart;
-    private AppSettingsModel appSettings;
-    private boolean isCartTab = true;
+    private UserPreferences userPreferences;
+    private boolean isHistoryTab = false;
     private ArrayList<OrderModel> allOrders = new ArrayList<>();
+    private ArrayList<OrderModel> inProgressOrders = new ArrayList<>();
+    private ArrayList<OrderModel> completedOrders = new ArrayList<>();
 
     @Nullable
     @Override
@@ -49,82 +48,48 @@ public class MyOrderFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
+        userPreferences = new UserPreferences(requireContext());
         orderRepository = new OrderRepository();
-        mainRepository = new MainRepository();
-        managmentCart = new ManagmentCart(requireContext());
         
-        loadAppSettings();
         setupListeners();
-        setupCartRecyclerView();
-        setupOrdersRecyclerView();
+        setupRecyclerView();
         setupTabs();
         loadOrders();
-    }
-
-    private void loadAppSettings() {
-        mainRepository.loadAppSettings().observe(getViewLifecycleOwner(), settings -> {
-            if (settings != null) {
-                appSettings = settings;
-                if (cartAdapter != null && !cartAdapter.getSelectedItems().isEmpty()) {
-                    updateCheckoutModal();
-                }
-            } else {
-                appSettings = new AppSettingsModel();
-                appSettings.setCurrency("USD");
-                appSettings.setCurrencySymbol("$");
-                appSettings.setTaxRate(0.1);
-                appSettings.setShippingFee(10);
-                appSettings.setFreeShippingThreshold(100);
-            }
-        });
+        updateCartBadge();
     }
 
     private void setupListeners() {
+        binding.cartBtn.setOnClickListener(v -> {
+            if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
+                com.example.onlineshop.Activity.MainContainerActivity activity = 
+                    (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
+                activity.navigateToMyCart();
+            }
+        });
+
         binding.bagIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
+            android.content.Intent intent = new android.content.Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
             startActivity(intent);
         });
     }
 
-    private void setupCartRecyclerView() {
-        binding.cartView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
-        cartAdapter = new CartAdapter(managmentCart.getListCart(), requireContext(), new ChangeNumberItemsListener() {
-            @Override
-            public void changed() {
-                updateCheckoutModal();
-                updateCartDisplay();
-            }
-        });
-        cartAdapter.setSelectionListener(new CartAdapter.OnItemSelectionChangedListener() {
-            @Override
-            public void onSelectionChanged(int selectedCount) {
-                if (selectedCount > 0) {
-                    updateCheckoutModal();
-                    binding.checkoutModalContainer.setVisibility(View.VISIBLE);
-                } else {
-                    binding.checkoutModalContainer.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onItemChecked(ItemsModel item, int position) {
-                updateCheckoutModal();
-                binding.checkoutModalContainer.setVisibility(View.VISIBLE);
-            }
-        });
-        binding.cartView.setAdapter(cartAdapter);
-    }
-
-    private void setupOrdersRecyclerView() {
+    private void setupRecyclerView() {
         binding.ordersRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         orderAdapter = new OrderAdapter(new ArrayList<>());
         orderAdapter.setActionListener(new OrderAdapter.OnOrderActionListener() {
             @Override
             public void onDetailClick(OrderModel order) {
+                android.content.Intent intent = new android.content.Intent(requireContext(), 
+                    com.example.onlineshop.Activity.OrderDetailActivity.class);
+                intent.putExtra("order", order);
+                startActivity(intent);
             }
 
             @Override
             public void onTrackingClick(OrderModel order) {
+                android.widget.Toast.makeText(requireContext(), 
+                    "Tính năng theo dõi đang được phát triển", 
+                    android.widget.Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -137,171 +102,119 @@ public class MyOrderFragment extends Fragment {
     }
 
     private void setupTabs() {
-        binding.cartTab.setOnClickListener(v -> switchToCartTab());
-        binding.myOrderTab.setOnClickListener(v -> switchToOrdersTab());
+        binding.myOrderTab.setOnClickListener(v -> switchToMyOrderTab());
+        binding.historyTab.setOnClickListener(v -> switchToHistoryTab());
         
-        switchToCartTab();
+        switchToMyOrderTab();
     }
 
-    private void switchToCartTab() {
-        isCartTab = true;
-        binding.cartTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
-        binding.cartTab.setTypeface(null, android.graphics.Typeface.BOLD);
-        binding.myOrderTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
-        binding.myOrderTab.setTypeface(null, android.graphics.Typeface.NORMAL);
+    private void switchToMyOrderTab() {
+        isHistoryTab = false;
+        binding.myOrderTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+        binding.myOrderTab.setTypeface(null, android.graphics.Typeface.BOLD);
+        binding.historyTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
+        binding.historyTab.setTypeface(null, android.graphics.Typeface.NORMAL);
         
         binding.tabIndicator.post(() -> {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tabIndicator.getLayoutParams();
+            params.width = binding.myOrderTab.getWidth();
+            binding.tabIndicator.setLayoutParams(params);
             binding.tabIndicator.animate()
                     .translationX(0)
                     .setDuration(200)
                     .start();
         });
         
-        binding.cartContainer.setVisibility(View.VISIBLE);
-        binding.ordersContainer.setVisibility(View.GONE);
-        
-        updateCartDisplay();
+        updateOrdersDisplay();
     }
 
-    private void switchToOrdersTab() {
-        isCartTab = false;
-        binding.myOrderTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
-        binding.myOrderTab.setTypeface(null, android.graphics.Typeface.BOLD);
-        binding.cartTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
-        binding.cartTab.setTypeface(null, android.graphics.Typeface.NORMAL);
+    private void switchToHistoryTab() {
+        isHistoryTab = true;
+        binding.historyTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+        binding.historyTab.setTypeface(null, android.graphics.Typeface.BOLD);
+        binding.myOrderTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey));
+        binding.myOrderTab.setTypeface(null, android.graphics.Typeface.NORMAL);
         
         binding.tabIndicator.post(() -> {
-            float translationX = binding.myOrderTab.getLeft() - binding.cartTab.getLeft();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.tabIndicator.getLayoutParams();
+            params.width = binding.historyTab.getWidth();
+            binding.tabIndicator.setLayoutParams(params);
+            float translationX = binding.historyTab.getLeft() - binding.myOrderTab.getLeft();
             binding.tabIndicator.animate()
                     .translationX(translationX)
                     .setDuration(200)
                     .start();
         });
         
-        binding.cartContainer.setVisibility(View.GONE);
-        binding.ordersContainer.setVisibility(View.VISIBLE);
-        binding.checkoutModalContainer.setVisibility(View.GONE);
-        
         updateOrdersDisplay();
     }
 
     private void loadOrders() {
-        orderRepository.loadAllOrders().observe(getViewLifecycleOwner(), orders -> {
-            allOrders = orders != null ? orders : new ArrayList<>();
+        orderRepository.loadInProgressOrders().observe(getViewLifecycleOwner(), orders -> {
+            inProgressOrders = orders != null ? orders : new ArrayList<>();
+            updateOrdersDisplay();
+        });
+
+        orderRepository.loadCompletedOrders().observe(getViewLifecycleOwner(), orders -> {
+            completedOrders = orders != null ? orders : new ArrayList<>();
             updateOrdersDisplay();
         });
     }
 
-    private void updateCartDisplay() {
-        if (managmentCart.getListCart().isEmpty()) {
-            binding.emptyCartTxt.setVisibility(View.VISIBLE);
-            binding.cartScrollView.setVisibility(View.GONE);
-            binding.checkoutModalContainer.setVisibility(View.GONE);
-        } else {
-            binding.emptyCartTxt.setVisibility(View.GONE);
-            binding.cartScrollView.setVisibility(View.VISIBLE);
-            cartAdapter = new CartAdapter(managmentCart.getListCart(), requireContext(), new ChangeNumberItemsListener() {
+    private void updateCartBadge() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+
+        if (userId != null) {
+            DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                    .getReference("Users")
+                    .child(userId)
+                    .child("cart");
+
+            cartRef.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void changed() {
-                    updateCheckoutModal();
-                    updateCartDisplay();
-                }
-            });
-            cartAdapter.setSelectionListener(new CartAdapter.OnItemSelectionChangedListener() {
-                @Override
-                public void onSelectionChanged(int selectedCount) {
-                    if (selectedCount > 0) {
-                        updateCheckoutModal();
-                        binding.checkoutModalContainer.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.checkoutModalContainer.setVisibility(View.GONE);
-                    }
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int itemCount = (int) snapshot.getChildrenCount();
+                    updateBadgeUI(itemCount);
                 }
 
                 @Override
-                public void onItemChecked(ItemsModel item, int position) {
-                    updateCheckoutModal();
-                    binding.checkoutModalContainer.setVisibility(View.VISIBLE);
+                public void onCancelled(@NonNull DatabaseError error) {
+                    updateBadgeFromLocalCart();
                 }
             });
-            binding.cartView.setAdapter(cartAdapter);
+        } else {
+            updateBadgeFromLocalCart();
+        }
+    }
+
+    private void updateBadgeFromLocalCart() {
+        ManagmentCart managmentCart = new ManagmentCart(requireContext());
+        int itemCount = managmentCart.getListCart().size();
+        updateBadgeUI(itemCount);
+    }
+
+    private void updateBadgeUI(int count) {
+        if (binding != null) {
+            if (count > 0) {
+                binding.cartBadge.setVisibility(View.VISIBLE);
+                binding.cartBadge.setText(String.valueOf(count > 99 ? "99+" : count));
+            } else {
+                binding.cartBadge.setVisibility(View.GONE);
+            }
         }
     }
 
     private void updateOrdersDisplay() {
-        if (allOrders.isEmpty()) {
-            binding.emptyOrdersTxt.setVisibility(View.VISIBLE);
+        ArrayList<OrderModel> ordersToShow = isHistoryTab ? completedOrders : inProgressOrders;
+        
+        if (ordersToShow.isEmpty()) {
+            binding.emptyTxt.setVisibility(View.VISIBLE);
             binding.ordersRecyclerView.setVisibility(View.GONE);
         } else {
-            binding.emptyOrdersTxt.setVisibility(View.GONE);
+            binding.emptyTxt.setVisibility(View.GONE);
             binding.ordersRecyclerView.setVisibility(View.VISIBLE);
-            orderAdapter.setOrders(allOrders);
-        }
-    }
-
-    private void updateCheckoutModal() {
-        if (cartAdapter == null) return;
-        
-        ArrayList<ItemsModel> selectedItems = cartAdapter.getSelectedItems();
-        
-        if (selectedItems.isEmpty()) {
-            binding.checkoutModalContainer.setVisibility(View.GONE);
-            return;
-        }
-
-        if (appSettings == null) {
-            return;
-        }
-        
-        double rawSubtotal = 0;
-        for (ItemsModel item : selectedItems) {
-            rawSubtotal += item.getPrice() * item.getNumberinCart();
-        }
-
-        double taxRate = appSettings.getTaxRate();
-        double shippingFee = appSettings.getShippingFee();
-        
-        if (rawSubtotal >= appSettings.getFreeShippingThreshold()) {
-            shippingFee = 0;
-        }
-        
-        double calculatedTax = Math.round((rawSubtotal * taxRate) * 100.0) / 100.0;
-        double calculatedSubtotal = Math.round(rawSubtotal * 100.0) / 100.0;
-        double calculatedTotal = Math.round((calculatedSubtotal + calculatedTax + shippingFee) * 100.0) / 100.0;
-
-        final double finalShippingFee = shippingFee;
-        final double finalCalculatedSubtotal = calculatedSubtotal;
-        final double finalCalculatedTax = calculatedTax;
-        final double finalCalculatedTotal = calculatedTotal;
-
-        binding.subtotalTxt.setText(formatPrice(calculatedSubtotal));
-        binding.deliveryTxt.setText(formatPrice(shippingFee));
-        binding.taxTxt.setText(formatPrice(calculatedTax));
-        binding.totalAmountTxt.setText(formatPrice(calculatedTotal));
-
-        binding.checkoutBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.PaymentActivity.class);
-            intent.putExtra("cart_items", selectedItems);
-            intent.putExtra("subtotal", finalCalculatedSubtotal);
-            intent.putExtra("tax", finalCalculatedTax);
-            intent.putExtra("delivery", finalShippingFee);
-            intent.putExtra("total", finalCalculatedTotal);
-            startActivity(intent);
-        });
-    }
-
-    private String formatPrice(double value) {
-        String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
-        return symbol + String.format(Locale.getDefault(), "%.2f", value);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isCartTab) {
-            updateCartDisplay();
-        } else {
-            loadOrders();
+            orderAdapter.setOrders(ordersToShow);
         }
     }
 
@@ -310,4 +223,11 @@ public class MyOrderFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateCartBadge();
+    }
 }
+

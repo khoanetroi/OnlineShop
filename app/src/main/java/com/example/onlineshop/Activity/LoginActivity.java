@@ -9,8 +9,10 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.Respository.AuthRepository;
+import com.example.onlineshop.Respository.CartRepository;
 import com.example.onlineshop.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
@@ -83,6 +85,10 @@ public class LoginActivity extends AppCompatActivity {
                     result.user.getEmail(),
                     result.user.getName()
                 );
+                
+                // Sync local cart to Firebase after login
+                syncCartAfterLogin();
+                
                 Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, MainContainerActivity.class));
                 finish();
@@ -90,5 +96,25 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, result.message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void syncCartAfterLogin() {
+        ManagmentCart managmentCart = new ManagmentCart(this);
+        String userId = userPreferences.getUserId();
+        
+        if (userId != null && !userId.isEmpty()) {
+            managmentCart.setUserId(userId);
+            managmentCart.syncLocalCartToFirebase(new CartRepository.OnCartOperationListener() {
+                @Override
+                public void onSuccess() {
+                    android.util.Log.d("LoginActivity", "Cart synced to Firebase successfully");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    android.util.Log.e("LoginActivity", "Failed to sync cart: " + error);
+                }
+            });
+        }
     }
 }

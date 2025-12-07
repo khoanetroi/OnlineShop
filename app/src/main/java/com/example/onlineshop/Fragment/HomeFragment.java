@@ -16,10 +16,17 @@ import com.example.onlineshop.Adapter.CategoryAdapter;
 import com.example.onlineshop.Adapter.PopularAdapter;
 import com.example.onlineshop.Adapter.SliderAdapter;
 import com.example.onlineshop.Domain.BannerModel;
+import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;
 import com.example.onlineshop.ViewModel.MainViewModel;
 import com.example.onlineshop.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -51,20 +58,17 @@ public class HomeFragment extends Fragment {
         initNewArrivals();
         initRecommended();
         setVariable();
+        updateCartBadge();
     }
     
     private void initUserGreeting() {
-        // Get username from UserPreferences and display it
         String userName = userPreferences.getUserName();
         if (userName != null && !userName.isEmpty()) {
             binding.textView5.setText(userName);
         } else {
-            // Fallback to email if name is not available
             String userEmail = userPreferences.getUserEmail();
             if (userEmail != null && !userEmail.isEmpty()) {
-                // Extract name from email (before @)
                 String nameFromEmail = userEmail.split("@")[0];
-                // Capitalize first letter
                 nameFromEmail = nameFromEmail.substring(0, 1).toUpperCase() + nameFromEmail.substring(1);
                 binding.textView5.setText(nameFromEmail);
             } else {
@@ -74,7 +78,6 @@ public class HomeFragment extends Fragment {
     }
 
     private void setVariable() {
-        // Profile image click - navigate to profile
         binding.imageView2.setOnClickListener(v -> {
             if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
                 com.example.onlineshop.Activity.MainContainerActivity activity = 
@@ -83,7 +86,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Search bar click - navigate to search activity
+        binding.cartBtn.setOnClickListener(v -> {
+            if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
+                com.example.onlineshop.Activity.MainContainerActivity activity =
+                        (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
+                activity.navigateToMyCart();
+            }
+        });
+
         binding.editTextText.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.SearchActivity.class);
             startActivity(intent);
@@ -92,7 +102,6 @@ public class HomeFragment extends Fragment {
         binding.editTextText.setFocusable(false);
         binding.editTextText.setFocusableInTouchMode(false);
 
-        // See All buttons
         binding.seeAllPopular.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), com.example.onlineshop.Activity.ProductListActivity.class);
             intent.putExtra("listType", "popular");
@@ -188,6 +197,56 @@ public class HomeFragment extends Fragment {
             binding.categoryView.setNestedScrollingEnabled(true);
             binding.progressBarCategory.setVisibility(View.GONE);
         });
+    }
+
+    private void updateCartBadge() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ? 
+                        FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        
+        if (userId != null) {
+            DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                    .getReference("Users")
+                    .child(userId)
+                    .child("cart");
+            
+            cartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int itemCount = (int) snapshot.getChildrenCount();
+                    updateBadgeUI(itemCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    updateBadgeFromLocalCart();
+                }
+            });
+        } else {
+            updateBadgeFromLocalCart();
+        }
+    }
+    
+    private void updateBadgeFromLocalCart() {
+        ManagmentCart managmentCart = new ManagmentCart(requireContext());
+        int itemCount = managmentCart.getListCart().size();
+        updateBadgeUI(itemCount);
+    }
+    
+    private void updateBadgeUI(int count) {
+        if (binding != null) {
+            if (count > 0) {
+                binding.cartBadge.setVisibility(View.VISIBLE);
+                binding.cartBadge.setText(String.valueOf(count > 99 ? "99+" : count));
+            } else {
+                binding.cartBadge.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateCartBadge();
     }
 
     @Override

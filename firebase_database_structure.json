@@ -4,17 +4,31 @@
       "$uid": {
         ".read": "$uid === auth.uid",
         ".write": "$uid === auth.uid",
+        "profile": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid",
+          ".validate": "newData.hasChildren(['email', 'name'])"
+        },
         "wishlist": {
           ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
+          ".write": "$uid === auth.uid",
+          "$itemId": {
+            ".validate": "newData.hasChildren(['itemId', 'title', 'price', 'picUrl', 'addedAt'])"
+          }
         },
         "cart": {
           ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
+          ".write": "$uid === auth.uid",
+          "$cartItemId": {
+            ".validate": "newData.hasChildren(['itemId', 'title', 'price', 'quantity', 'addedAt']) && newData.child('quantity').val() > 0 && newData.child('quantity').val() <= 50"
+          }
         },
         "addresses": {
           ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
+          ".write": "$uid === auth.uid",
+          "$addressId": {
+            ".validate": "newData.hasChildren(['id', 'fullName', 'phone', 'address', 'city'])"
+          }
         }
       }
     },

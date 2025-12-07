@@ -57,20 +57,31 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
         }
 
         com.example.onlineshop.Domain.ItemsModel firstItem = order.getItems().get(0);
+        int itemCount = order.getItems().size();
         
-        if (firstItem.getPicUrl() != null && !firstItem.getPicUrl().isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(firstItem.getPicUrl().get(0))
-                    .into(holder.binding.productPic);
-        }
-
-        holder.binding.productTitleTxt.setText(firstItem.getTitle());
-
-        if (firstItem.getColor() != null && !firstItem.getColor().isEmpty()) {
-            String colorText = "Màu: " + firstItem.getColor().get(0);
-            holder.binding.productColorTxt.setText(colorText);
+        // Show item count badge if more than 1 product
+        if (itemCount > 1) {
+            holder.binding.productPic.setVisibility(View.GONE);
+            holder.binding.itemCountBadge.setVisibility(View.VISIBLE);
+            holder.binding.itemCountBadge.setText(String.valueOf(itemCount));
+            holder.binding.productTitleTxt.setText("Đơn Hàng Nhiều Sản Phẩm");
+            holder.binding.productColorTxt.setText("Tổng cộng " + itemCount + " sản phẩm");
         } else {
-            holder.binding.productColorTxt.setText("Màu: Không có");
+            holder.binding.productPic.setVisibility(View.VISIBLE);
+            holder.binding.itemCountBadge.setVisibility(View.GONE);
+            if (firstItem.getPicUrl() != null && !firstItem.getPicUrl().isEmpty()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(firstItem.getPicUrl().get(0))
+                        .into(holder.binding.productPic);
+            }
+            holder.binding.productTitleTxt.setText(firstItem.getTitle());
+            
+            if (firstItem.getColor() != null && !firstItem.getColor().isEmpty()) {
+                String colorText = "Màu: " + firstItem.getColor().get(0);
+                holder.binding.productColorTxt.setText(colorText);
+            } else {
+                holder.binding.productColorTxt.setText("Màu: Không có");
+            }
         }
 
         int totalQty = 0;

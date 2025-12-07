@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.onlineshop.Adapter.FavoriteAdapter;
 import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityFavoritesBinding;
@@ -57,6 +58,7 @@ public class FavoritesFragment extends Fragment {
         initRecyclerView();
         initListeners();
         loadFavorites();
+        updateCartBadge();
     }
 
     private void initFirebase() {
@@ -119,10 +121,62 @@ public class FavoritesFragment extends Fragment {
             applyFilterAndSort();
         });
 
+        binding.cartBtn.setOnClickListener(v -> {
+            if (getActivity() instanceof com.example.onlineshop.Activity.MainContainerActivity) {
+                com.example.onlineshop.Activity.MainContainerActivity activity = 
+                    (com.example.onlineshop.Activity.MainContainerActivity) getActivity();
+                activity.navigateToMyCart();
+            }
+        });
+
         binding.notificationBtn.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(requireContext(), com.example.onlineshop.Activity.NotificationActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void updateCartBadge() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+
+        if (userId != null) {
+            DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                    .getReference("Users")
+                    .child(userId)
+                    .child("cart");
+
+            cartRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int itemCount = (int) snapshot.getChildrenCount();
+                    updateBadgeUI(itemCount);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    updateBadgeFromLocalCart();
+                }
+            });
+        } else {
+            updateBadgeFromLocalCart();
+        }
+    }
+
+    private void updateBadgeFromLocalCart() {
+        ManagmentCart managmentCart = new ManagmentCart(requireContext());
+        int itemCount = managmentCart.getListCart().size();
+        updateBadgeUI(itemCount);
+    }
+
+    private void updateBadgeUI(int count) {
+        if (binding != null) {
+            if (count > 0) {
+                binding.cartBadge.setVisibility(View.VISIBLE);
+                binding.cartBadge.setText(String.valueOf(count > 99 ? "99+" : count));
+            } else {
+                binding.cartBadge.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void loadFavorites() {
@@ -257,6 +311,12 @@ public class FavoritesFragment extends Fragment {
             wishlistListener = null;
         }
         binding = null;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateCartBadge();
     }
 }
 

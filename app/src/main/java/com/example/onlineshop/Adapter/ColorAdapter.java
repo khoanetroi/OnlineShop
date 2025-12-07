@@ -63,6 +63,13 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.Viewholder> 
                     .into(holder.binding.colorLayout);
         }
     }
+    
+    public String getSelectedColor() {
+        if (selectedPosition >= 0 && selectedPosition < items.size()) {
+            return items.get(selectedPosition);
+        }
+        return null;
+    }
     @Override
     public int getItemCount() {
         return items.size();

@@ -57,6 +57,39 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
+                <FrameLayout
+                    android:id="@+id/cartIconContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp">
+
+                    <!-- Cart icon same visual size as Favorites page -->
+                    <ImageView
+                        android:id="@+id/cartBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="Giỏ hàng"
+                        android:padding="0dp"
+                        android:src="@drawable/cart_icon" />
+
+                    <!-- Notification badge, clear but not huge -->
+                    <TextView
+                        android:id="@+id/cartBadge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:background="@drawable/red_bg"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/imageView2"
                     android:layout_width="40dp"
