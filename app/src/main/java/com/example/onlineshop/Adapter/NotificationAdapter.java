@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onlineshop.Domain.NotificationModel;
+import com.example.onlineshop.Model.NotificationModel;
 import com.example.onlineshop.databinding.ViewholderNotificationBinding;
 
 import java.util.ArrayList;

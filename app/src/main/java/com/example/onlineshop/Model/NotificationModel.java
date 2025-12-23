@@ -1,4 +1,4 @@
-package com.example.onlineshop.Domain;
+package com.example.onlineshop.Model;
 
 public class NotificationModel {
     private String id;

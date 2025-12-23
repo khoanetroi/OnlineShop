@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Adapter.PaymentMethodAdapter;
 import com.example.onlineshop.Adapter.PaymentProductAdapter;
-import com.example.onlineshop.Domain.AppSettingsModel;
-import com.example.onlineshop.Domain.ItemsModel;
-import com.example.onlineshop.Domain.OrderModel;
+import com.example.onlineshop.Model.AppSettingsModel;
+import com.example.onlineshop.Model.ItemsModel;
+import com.example.onlineshop.Model.OrderModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.R;
 import com.example.onlineshop.Respository.MainRepository;

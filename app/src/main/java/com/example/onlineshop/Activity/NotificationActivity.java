@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Adapter.NotificationAdapter;
-import com.example.onlineshop.Domain.NotificationModel;
+import com.example.onlineshop.Model.NotificationModel;
 import com.example.onlineshop.databinding.ActivityNotificationBinding;
 
 import java.util.ArrayList;

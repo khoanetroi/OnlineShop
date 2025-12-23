@@ -1,15 +1,14 @@
 package com.example.onlineshop.Activity;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Adapter.OrderDetailProductAdapter;
-import com.example.onlineshop.Domain.ItemsModel;
-import com.example.onlineshop.Domain.OrderModel;
+import com.example.onlineshop.Model.ItemsModel;
+import com.example.onlineshop.Model.OrderModel;
 import com.example.onlineshop.databinding.ActivityOrderDetailBinding;
 
 import java.text.NumberFormat;

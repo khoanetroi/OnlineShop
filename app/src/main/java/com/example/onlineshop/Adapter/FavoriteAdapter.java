@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterInside;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.onlineshop.Activity.DetailActivity;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.databinding.ViewholderFavoriteBinding;
 import com.google.firebase.auth.FirebaseAuth;

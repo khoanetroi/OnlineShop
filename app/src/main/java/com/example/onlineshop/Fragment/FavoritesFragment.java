@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.onlineshop.Adapter.FavoriteAdapter;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;

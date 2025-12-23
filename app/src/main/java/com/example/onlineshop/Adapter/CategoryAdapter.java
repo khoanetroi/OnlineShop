@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onlineshop.Domain.CategoryModel;
+import com.example.onlineshop.Model.CategoryModel;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ViewholderCategoryBinding;
 

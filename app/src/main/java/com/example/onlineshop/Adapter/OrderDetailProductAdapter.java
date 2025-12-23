@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.databinding.ViewholderOrderDetailProductBinding;
 
 import java.text.NumberFormat;

@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
