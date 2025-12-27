@@ -59,6 +59,14 @@ public class PaymentActivity extends AppCompatActivity {
 
         managmentCart = new ManagmentCart(this);
         mainRepository = new MainRepository();
+        
+        // Initialize appSettings with default values before loading from Firebase
+        appSettings = new AppSettingsModel();
+        appSettings.setCurrency("USD");
+        appSettings.setCurrencySymbol("$");
+        appSettings.setTaxRate(0.1);
+        appSettings.setShippingFee(10);
+        
         loadAppSettings();
 
         getIntentData();
@@ -224,139 +232,173 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private String formatPrice(double value) {
-        String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
+        if (appSettings == null) {
+            return "$" + String.format(Locale.getDefault(), "%.2f", value);
+        }
+        String symbol = appSettings.getCurrencySymbol();
+        if (symbol == null || symbol.isEmpty()) {
+            symbol = "$";
+        }
         return symbol + String.format(Locale.getDefault(), "%.2f", value);
     }
 
     private void placeOrder() {
-        if (selectedPaymentMethod == null) {
-            Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        try {
+            if (selectedPaymentMethod == null) {
+                Toast.makeText(this, "Vui lòng chọn phương thức thanh toán", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser == null) {
-            Toast.makeText(this, "Vui lòng đăng nhập để đặt hàng", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser == null) {
+                Toast.makeText(this, "Vui lòng đăng nhập để đặt hàng", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        String uid = firebaseUser.getUid();
+            String uid = firebaseUser.getUid();
 
-        if (items == null || items.isEmpty()) {
-            Toast.makeText(this, "Giỏ hàng của bạn trống", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            if (items == null || items.isEmpty()) {
+                Toast.makeText(this, "Giỏ hàng của bạn trống", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        if (!binding.checkoutNowBtn.isEnabled()) {
-            return;
-        }
+            if (!binding.checkoutNowBtn.isEnabled()) {
+                return;
+            }
 
-        binding.progressBar.setVisibility(View.VISIBLE);
-        binding.checkoutNowBtn.setEnabled(false);
-        binding.checkoutNowBtn.setAlpha(0.5f);
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.checkoutNowBtn.setEnabled(false);
+            binding.checkoutNowBtn.setAlpha(0.5f);
 
-        DatabaseReference ordersRef = FirebaseDatabase.getInstance()
-                .getReference("Orders")
-                .child(uid);
+            DatabaseReference ordersRef = FirebaseDatabase.getInstance()
+                    .getReference("Orders")
+                    .child(uid);
 
-        String orderId = ordersRef.push().getKey();
-        if (orderId == null) {
+            String orderId = ordersRef.push().getKey();
+            if (orderId == null) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.checkoutNowBtn.setEnabled(true);
+                binding.checkoutNowBtn.setAlpha(1.0f);
+                Toast.makeText(this, "Không thể tạo đơn hàng", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            long currentTime = System.currentTimeMillis();
+            OrderModel order = new OrderModel(
+                    orderId,
+                    uid,
+                    subtotal,
+                    tax,
+                    delivery,
+                    total,
+                    currentTime,
+                    "Đang Xử Lý",
+                    items
+            );
+            
+            order.setOrderDate(currentTime);
+            order.setCreatedAt(currentTime);
+
+            ordersRef.child(orderId).setValue(order)
+                    .addOnSuccessListener(unused -> {
+                        binding.progressBar.setVisibility(View.GONE);
+                        updateCheckoutButtonState(true);
+
+                        removeOrderedItemsFromCart(items);
+
+                        Toast.makeText(PaymentActivity.this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
+                        
+                        // Delay navigation to ensure Firebase operations complete
+                        binding.getRoot().postDelayed(() -> {
+                            try {
+                                Intent intent = new Intent(PaymentActivity.this, MainContainerActivity.class);
+                                intent.putExtra("select_my_order", true);
+                                intent.putExtra("show_orders_tab", true);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                PaymentActivity.this.finish();
+                            } catch (Exception e) {
+                                android.util.Log.e("PaymentActivity", "Navigation failed", e);
+                                Toast.makeText(PaymentActivity.this, "Lỗi điều hướng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }, 500);
+                    })
+                    .addOnFailureListener(e -> {
+                        binding.progressBar.setVisibility(View.GONE);
+                        updateCheckoutButtonState(true);
+                        
+                        String errorMessage = "Không thể đặt hàng";
+                        if (e.getMessage() != null) {
+                            errorMessage += ": " + e.getMessage();
+                        }
+                        Toast.makeText(PaymentActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        
+                        android.util.Log.e("PaymentActivity", "Order placement failed", e);
+                        android.util.Log.e("PaymentActivity", "Order details: orderId=" + orderId + ", userId=" + uid + ", items=" + (items != null ? items.size() : 0));
+                        android.util.Log.e("PaymentActivity", "Order object: " + order.toString());
+                    });
+        } catch (Exception e) {
+            android.util.Log.e("PaymentActivity", "Unexpected error in placeOrder", e);
+            Toast.makeText(this, "Lỗi bất ngờ: " + e.getMessage(), Toast.LENGTH_LONG).show();
             binding.progressBar.setVisibility(View.GONE);
             binding.checkoutNowBtn.setEnabled(true);
-            Toast.makeText(this, "Không thể tạo đơn hàng", Toast.LENGTH_SHORT).show();
-            return;
+            binding.checkoutNowBtn.setAlpha(1.0f);
         }
-
-        long currentTime = System.currentTimeMillis();
-        OrderModel order = new OrderModel(
-                orderId,
-                uid,
-                subtotal,
-                tax,
-                delivery,
-                total,
-                currentTime,
-                "Đang Xử Lý",
-                items
-        );
-        
-        order.setOrderDate(currentTime);
-        order.setCreatedAt(currentTime);
-
-        ordersRef.child(orderId).setValue(order)
-                .addOnSuccessListener(unused -> {
-                    binding.progressBar.setVisibility(View.GONE);
-                    updateCheckoutButtonState(true);
-
-                    removeOrderedItemsFromCart(items);
-
-                    Toast.makeText(PaymentActivity.this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-                    
-                    Intent intent = new Intent(PaymentActivity.this, MainContainerActivity.class);
-                    intent.putExtra("select_my_order", true);
-                    intent.putExtra("show_orders_tab", true);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    binding.progressBar.setVisibility(View.GONE);
-                    updateCheckoutButtonState(true);
-                    
-                    String errorMessage = "Không thể đặt hàng";
-                    if (e.getMessage() != null) {
-                        errorMessage += ": " + e.getMessage();
-                    }
-                    Toast.makeText(PaymentActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                    
-                    android.util.Log.e("PaymentActivity", "Order placement failed", e);
-                    android.util.Log.e("PaymentActivity", "Order details: orderId=" + orderId + ", userId=" + uid + ", items=" + (items != null ? items.size() : 0));
-                    android.util.Log.e("PaymentActivity", "Order object: " + order.toString());
-                });
     }
     
     private void removeOrderedItemsFromCart(ArrayList<ItemsModel> orderedItems) {
         if (orderedItems == null || orderedItems.isEmpty()) return;
         
-        ArrayList<ItemsModel> currentCart = managmentCart.getListCart();
-        for (ItemsModel orderedItem : orderedItems) {
-            for (int i = currentCart.size() - 1; i >= 0; i--) {
-                if (currentCart.get(i).getTitle().equals(orderedItem.getTitle())) {
-                    currentCart.remove(i);
-                    break;
+        try {
+            ArrayList<ItemsModel> currentCart = managmentCart.getListCart();
+            for (ItemsModel orderedItem : orderedItems) {
+                for (int i = currentCart.size() - 1; i >= 0; i--) {
+                    if (currentCart.get(i).getTitle().equals(orderedItem.getTitle())) {
+                        currentCart.remove(i);
+                        break;
+                    }
                 }
             }
-        }
-        
-        managmentCart.clearCart();
-        for (ItemsModel item : currentCart) {
-            managmentCart.insertItem(item);
+            
+            managmentCart.clearCart();
+            for (ItemsModel item : currentCart) {
+                managmentCart.insertItem(item);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("PaymentActivity", "Error updating local cart", e);
         }
         
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
-            DatabaseReference cartRef = FirebaseDatabase.getInstance()
-                    .getReference("Users")
-                    .child(firebaseUser.getUid())
-                    .child("cart");
+            try {
+                DatabaseReference cartRef = FirebaseDatabase.getInstance()
+                        .getReference("Users")
+                        .child(firebaseUser.getUid())
+                        .child("cart");
 
-            for (ItemsModel orderedItem : orderedItems) {
-                String title = orderedItem.getTitle();
-                if (title == null) continue;
+                for (ItemsModel orderedItem : orderedItems) {
+                    String title = orderedItem.getTitle();
+                    if (title == null) continue;
 
-                cartRef.orderByChild("title").equalTo(title)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot child : snapshot.getChildren()) {
-                                    child.getRef().removeValue();
+                    cartRef.orderByChild("title").equalTo(title)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot child : snapshot.getChildren()) {
+                                        child.getRef().removeValue().addOnFailureListener(e -> 
+                                            android.util.Log.e("PaymentActivity", "Error removing cart item from Firebase", e)
+                                        );
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                            }
-                        });
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    android.util.Log.e("PaymentActivity", "Cart removal cancelled", error.toException());
+                                }
+                            });
+                }
+            } catch (Exception e) {
+                android.util.Log.e("PaymentActivity", "Error removing Firebase cart items", e);
             }
         }
     }
