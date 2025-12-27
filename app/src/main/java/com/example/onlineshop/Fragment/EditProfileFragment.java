@@ -11,10 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.onlineshop.Domain.UserModel;
+import com.example.onlineshop.Model.UserModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.Respository.AuthRepository;
-import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ActivityEditProfileBinding;
 
 public class EditProfileFragment extends Fragment {

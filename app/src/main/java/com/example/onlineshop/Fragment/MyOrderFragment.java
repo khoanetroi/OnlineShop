@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Adapter.OrderAdapter;
-import com.example.onlineshop.Domain.OrderModel;
+import com.example.onlineshop.Model.OrderModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;

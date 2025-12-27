@@ -1,6 +1,5 @@
 package com.example.onlineshop.Activity;
 
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -13,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.onlineshop.Adapter.ColorAdapter;
 import com.example.onlineshop.Adapter.PicListAdapter;
 import com.example.onlineshop.Adapter.SizeAdapter;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.Respository.CartRepository;
@@ -107,14 +106,14 @@ public class DetailActivity extends AppCompatActivity {
 
         binding.titleTxt.setText(object.getTitle());
         
-        String discountPrice = "$" + String.format("%.2f", object.getPrice());
-        String originalPrice = "$" + String.format("%.2f", object.getOldPrice());
+        String discountPrice =  String.format("%.0f", object.getPrice()) + "đ";
+        String originalPrice = String.format("%.0f", object.getOldPrice()) +"đ";
         binding.discountPriceTxt.setText(discountPrice);
         binding.originalPriceTxt.setText(originalPrice);
         
         binding.originalPriceTxt.setPaintFlags(binding.originalPriceTxt.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
         
-        String ratingText = String.format("%.1f (%d Đánh Giá)", object.getRating(), object.getReview());
+        String ratingText = String.format("%.1f (%d đánh giá)", object.getRating(), object.getReview());
         binding.ratingTxt.setText(ratingText);
         
         binding.descriptionTxt.setText(object.getDescription());

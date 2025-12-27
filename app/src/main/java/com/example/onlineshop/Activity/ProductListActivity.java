@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.onlineshop.Adapter.PopularAdapter;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.ViewModel.MainViewModel;
 import com.example.onlineshop.databinding.ActivityProductListBinding;
 

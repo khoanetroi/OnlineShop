@@ -3,9 +3,9 @@ package com.example.onlineshop.ViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.onlineshop.Domain.BannerModel;
-import com.example.onlineshop.Domain.CategoryModel;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.BannerModel;
+import com.example.onlineshop.Model.CategoryModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Respository.MainRepository;
 
 import java.util.ArrayList;

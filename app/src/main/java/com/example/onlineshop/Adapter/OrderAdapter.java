@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.onlineshop.Domain.OrderModel;
+import com.example.onlineshop.Model.OrderModel;
 import com.example.onlineshop.R;
 import com.example.onlineshop.databinding.ViewholderOrderBinding;
 
@@ -56,7 +56,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
             return;
         }
 
-        com.example.onlineshop.Domain.ItemsModel firstItem = order.getItems().get(0);
+        com.example.onlineshop.Model.ItemsModel firstItem = order.getItems().get(0);
         int itemCount = order.getItems().size();
         
         // Show item count badge if more than 1 product
@@ -85,7 +85,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
         }
 
         int totalQty = 0;
-        for (com.example.onlineshop.Domain.ItemsModel item : order.getItems()) {
+        for (com.example.onlineshop.Model.ItemsModel item : order.getItems()) {
             totalQty += item.getNumberinCart();
         }
         holder.binding.productQtyTxt.setText("SL: " + totalQty);

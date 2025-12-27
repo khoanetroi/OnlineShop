@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
-import com.example.onlineshop.Domain.BannerModel;
+import com.example.onlineshop.Model.BannerModel;
 import com.example.onlineshop.R;
 
 import java.util.ArrayList;

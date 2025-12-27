@@ -4,10 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.onlineshop.Domain.AppSettingsModel;
-import com.example.onlineshop.Domain.BannerModel;
-import com.example.onlineshop.Domain.CategoryModel;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.AppSettingsModel;
+import com.example.onlineshop.Model.BannerModel;
+import com.example.onlineshop.Model.CategoryModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

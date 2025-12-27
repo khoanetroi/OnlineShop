@@ -78,8 +78,10 @@
             android:id="@+id/pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
             android:padding="48dp"
+            android:scaleType="fitCenter"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -308,7 +310,7 @@
                     android:id="@+id/discountPriceTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$0.00"
+                    android:text="0.00VND"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -318,7 +320,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="$0.00"
+                    android:text="0.00VND"
                     android:textColor="@color/text_secondary"
                     android:textSize="16sp" />
             </LinearLayout>

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.onlineshop.Activity.PaymentActivity;
 import com.example.onlineshop.Adapter.CartAdapter;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.databinding.FragmentMyCartBinding;
 import com.google.firebase.auth.FirebaseAuth;

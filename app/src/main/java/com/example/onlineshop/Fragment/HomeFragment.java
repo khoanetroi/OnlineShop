@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.onlineshop.Adapter.CategoryAdapter;
 import com.example.onlineshop.Adapter.PopularAdapter;
 import com.example.onlineshop.Adapter.SliderAdapter;
-import com.example.onlineshop.Domain.BannerModel;
+import com.example.onlineshop.Model.BannerModel;
 import com.example.onlineshop.Helper.ManagmentCart;
 import com.example.onlineshop.Helper.UserPreferences;
 import com.example.onlineshop.R;

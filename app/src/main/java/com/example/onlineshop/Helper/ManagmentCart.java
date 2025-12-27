@@ -2,7 +2,7 @@ package com.example.onlineshop.Helper;
 
 import android.content.Context;
 import android.widget.Toast;
-import com.example.onlineshop.Domain.ItemsModel;
+import com.example.onlineshop.Model.ItemsModel;
 import com.example.onlineshop.Respository.CartRepository;
 
 import java.util.ArrayList;
