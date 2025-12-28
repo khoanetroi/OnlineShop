@@ -215,8 +215,8 @@ public class PaymentActivity extends AppCompatActivity {
                 setupSummary();
             } else {
                 appSettings = new AppSettingsModel();
-                appSettings.setCurrency("USD");
-                appSettings.setCurrencySymbol("$");
+                appSettings.setCurrency("VND");
+                appSettings.setCurrencySymbol("đ");
                 appSettings.setTaxRate(0.1);
                 appSettings.setShippingFee(10);
             }
@@ -224,8 +224,8 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private String formatPrice(double value) {
-        String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "$";
-        return symbol + String.format(Locale.getDefault(), "%.2f", value);
+        String symbol = appSettings != null ? appSettings.getCurrencySymbol() : "đ";
+        return symbol + String.format(Locale.getDefault(), "%.0f", value);
     }
 
     private void placeOrder() {

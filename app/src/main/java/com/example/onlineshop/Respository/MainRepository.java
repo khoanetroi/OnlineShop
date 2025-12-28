@@ -139,8 +139,8 @@ public class MainRepository {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 AppSettingsModel defaultSettings = new AppSettingsModel();
-                defaultSettings.setCurrency("USD");
-                defaultSettings.setCurrencySymbol("$");
+                defaultSettings.setCurrency("VND");
+                defaultSettings.setCurrencySymbol("đ");
                 defaultSettings.setTaxRate(0.1);
                 defaultSettings.setShippingFee(10);
                 defaultSettings.setFreeShippingThreshold(100);
