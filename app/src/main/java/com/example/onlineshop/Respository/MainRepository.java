@@ -132,23 +132,95 @@ public class MainRepository {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                AppSettingsModel settings = snapshot.getValue(AppSettingsModel.class);
-                settingsData.setValue(settings);
+                try {
+                    AppSettingsModel settings = snapshot.getValue(AppSettingsModel.class);
+                    if (settings != null) {
+                        settingsData.setValue(settings);
+                    } else {
+                        settingsData.setValue(createDefaultSettings());
+                    }
+                } catch (Exception e) {
+                    // Handle type conversion errors from Firebase
+                    android.util.Log.e("MainRepository", "Error parsing AppSettings", e);
+
+                    // Try to manually parse the data
+                    try {
+                        AppSettingsModel settings = new AppSettingsModel();
+
+                        if (snapshot.hasChild("currency")) {
+                            settings.setCurrency(snapshot.child("currency").getValue(String.class));
+                        }
+                        if (snapshot.hasChild("currencySymbol")) {
+                            settings.setCurrencySymbol(snapshot.child("currencySymbol").getValue(String.class));
+                        }
+                        if (snapshot.hasChild("taxRate")) {
+                            Object taxObj = snapshot.child("taxRate").getValue();
+                            if (taxObj instanceof Number) {
+                                settings.setTaxRate(((Number) taxObj).doubleValue());
+                            }
+                        }
+                        if (snapshot.hasChild("shippingFee")) {
+                            Object shippingObj = snapshot.child("shippingFee").getValue();
+                            if (shippingObj instanceof Number) {
+                                settings.setShippingFee(((Number) shippingObj).doubleValue());
+                            }
+                        }
+                        if (snapshot.hasChild("freeShippingThreshold")) {
+                            Object thresholdObj = snapshot.child("freeShippingThreshold").getValue();
+                            if (thresholdObj instanceof Number) {
+                                settings.setFreeShippingThreshold(((Number) thresholdObj).doubleValue());
+                            }
+                        }
+                        if (snapshot.hasChild("maxCartItems")) {
+                            Object maxObj = snapshot.child("maxCartItems").getValue();
+                            if (maxObj instanceof Number) {
+                                settings.setMaxCartItems(((Number) maxObj).intValue());
+                            }
+                        }
+                        if (snapshot.hasChild("maintenanceMode")) {
+                            settings.setMaintenanceMode(snapshot.child("maintenanceMode").getValue(Boolean.class));
+                        }
+                        if (snapshot.hasChild("minAppVersion")) {
+                            settings.setMinAppVersion(snapshot.child("minAppVersion").getValue(String.class));
+                        }
+                        if (snapshot.hasChild("returnPolicyDays")) {
+                            Object returnObj = snapshot.child("returnPolicyDays").getValue();
+                            if (returnObj instanceof Number) {
+                                settings.setReturnPolicyDays(((Number) returnObj).intValue());
+                            }
+                        }
+                        if (snapshot.hasChild("supportEmail")) {
+                            settings.setSupportEmail(snapshot.child("supportEmail").getValue(String.class));
+                        }
+                        if (snapshot.hasChild("supportPhone")) {
+                            settings.setSupportPhone(snapshot.child("supportPhone").getValue(String.class));
+                        }
+
+                        settingsData.setValue(settings);
+                    } catch (Exception e2) {
+                        android.util.Log.e("MainRepository", "Manual parsing also failed", e2);
+                        settingsData.setValue(createDefaultSettings());
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                AppSettingsModel defaultSettings = new AppSettingsModel();
-                defaultSettings.setCurrency("VND");
-                defaultSettings.setCurrencySymbol("đ");
-                defaultSettings.setTaxRate(0.1);
-                defaultSettings.setShippingFee(10);
-                defaultSettings.setFreeShippingThreshold(100);
-                defaultSettings.setMaxCartItems(50);
-                settingsData.setValue(defaultSettings);
+                settingsData.setValue(createDefaultSettings());
             }
         });
         return settingsData;
+    }
+
+    private AppSettingsModel createDefaultSettings() {
+        AppSettingsModel defaultSettings = new AppSettingsModel();
+        defaultSettings.setCurrency("VND");
+        defaultSettings.setCurrencySymbol("đ");
+        defaultSettings.setTaxRate(0.1);
+        defaultSettings.setShippingFee(10);
+        defaultSettings.setFreeShippingThreshold(100);
+        defaultSettings.setMaxCartItems(50);
+        return defaultSettings;
     }
 
 
