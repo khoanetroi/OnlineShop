@@ -105,11 +105,9 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         binding.titleTxt.setText(object.getTitle());
-        
-        String discountPrice =  String.format("%.0f", object.getPrice()) + "đ";
-        String originalPrice = String.format("%.0f", object.getOldPrice()) +"đ";
-        binding.discountPriceTxt.setText(discountPrice);
-        binding.originalPriceTxt.setText(originalPrice);
+
+        binding.discountPriceTxt.setText(formatPrice(object.getPrice()));
+        binding.originalPriceTxt.setText(formatPrice(object.getOldPrice()));
         
         binding.originalPriceTxt.setPaintFlags(binding.originalPriceTxt.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
         
@@ -308,6 +306,10 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void updateFavIcon() {
+    }
+    private String formatPrice(double price) {
+        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+        return formatter.format(price) + "đ";
     }
 }
 

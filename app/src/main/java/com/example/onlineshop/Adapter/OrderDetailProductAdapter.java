@@ -62,7 +62,7 @@ public class OrderDetailProductAdapter extends RecyclerView.Adapter<OrderDetailP
 
         // Price
         double totalPrice = item.getPrice() * item.getNumberinCart();
-        holder.binding.priceTxt.setText(formatPrice(totalPrice));
+        holder.binding.priceTxt.setText(formatPrice(totalPrice) + "đ");
     }
 
     @Override
@@ -71,7 +71,8 @@ public class OrderDetailProductAdapter extends RecyclerView.Adapter<OrderDetailP
     }
 
     private String formatPrice(double value) {
-        return String.format("%.0f", value) + "đ";
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
+        return formatter.format(value);
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {

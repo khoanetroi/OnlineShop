@@ -97,7 +97,7 @@
                     android:contentDescription="@string/profile_image"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/circleImageView"
-                    app:srcCompat="@drawable/profile" />
+                    app:srcCompat="@drawable/user" />
             </LinearLayout>
 
             <!-- Search Bar Section -->

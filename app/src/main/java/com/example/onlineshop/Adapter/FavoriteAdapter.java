@@ -74,7 +74,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         try {
             holder.binding.titleTxt.setText(item.getTitle() != null ? item.getTitle() : "");
-            holder.binding.priceTxt.setText(String.format("%.0f", item.getPrice())+ "đ");
+            holder.binding.priceTxt.setText(formatPrice(item.getPrice()) + "đ");
 
             RequestOptions options = new RequestOptions().transform(new CenterInside());
             if (item.getPicUrl() != null && !item.getPicUrl().isEmpty() && item.getPicUrl().get(0) != null) {
@@ -175,6 +175,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
     public int getItemCount() {
         return items.size();
     }
+
+    private String formatPrice(double value) {
+        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+        return formatter.format(value);
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final ViewholderFavoriteBinding binding;

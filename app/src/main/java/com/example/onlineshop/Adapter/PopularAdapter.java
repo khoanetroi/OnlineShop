@@ -101,9 +101,9 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
         }
 
         holder.binding.titleTxt.setText(item.getTitle() != null ? item.getTitle() : "");
-        holder.binding.priceTxt.setText(String.format("%.0f", item.getPrice()) + "₫");
+        holder.binding.priceTxt.setText(formatPrice(item.getPrice()));
         holder.binding.ratingTxt.setText("(" + item.getRating() + ")");
-        holder.binding.oldPriceTxt.setText(String.format("%.0f", item.getOldPrice()) + "₫");
+        holder.binding.oldPriceTxt.setText(formatPrice(item.getOldPrice()));
         if (item.getOffPercent() != null) {
             holder.binding.offPercentTxt.setText(item.getOffPercent() + " Giảm");
         }
@@ -473,6 +473,11 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    private String formatPrice(double price) {
+        java.text.NumberFormat formatter = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+        return formatter.format(price) + "đ";
     }
 
     @Override
