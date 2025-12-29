@@ -76,9 +76,9 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         // Price breakdown
         binding.subtotalTxt.setText(formatPrice(order.getSubtotal()));
-        binding.taxTxt.setText(formatPrice(order.getTax()));
-        binding.deliveryTxt.setText(formatPrice(order.getDelivery()));
-        binding.totalTxt.setText(formatPrice(order.getTotal()));
+        binding.taxTxt.setText(formatPrice(order.getTax()) + "đ");
+        binding.deliveryTxt.setText(formatPrice(order.getDelivery()) + "đ");
+        binding.totalTxt.setText(formatPrice(order.getTotal()) + "đ");
     }
 
     private void setupListeners() {
@@ -86,7 +86,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     private String formatPrice(double value) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         return formatter.format(value);
     }
 }

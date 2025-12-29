@@ -62,8 +62,8 @@ public class PaymentActivity extends AppCompatActivity {
 
         // Initialize appSettings with default values before loading from Firebase
         appSettings = new AppSettingsModel();
-        appSettings.setCurrency("USD");
-        appSettings.setCurrencySymbol("$");
+        appSettings.setCurrency("VND");
+        appSettings.setCurrencySymbol("đ");
         appSettings.setTaxRate(0.1);
         appSettings.setShippingFee(10);
 
@@ -233,7 +233,7 @@ public class PaymentActivity extends AppCompatActivity {
 
     private String formatPrice(double value) {
         if (appSettings == null) {
-            return  String.format(Locale.getDefault() + "đ", "%.0f", value);
+            return  String.format(Locale.getDefault(), "%.0f", value);
         }
         String symbol = appSettings.getCurrencySymbol();
         if (symbol == null || symbol.isEmpty()) {

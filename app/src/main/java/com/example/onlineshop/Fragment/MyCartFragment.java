@@ -190,10 +190,10 @@ public class MyCartFragment extends Fragment {
         double delivery = subtotal > 100 ? 0 : 10;
         double total = subtotal + tax + delivery;
         
-        binding.subtotalTxt.setText(String.format("$%.0f", subtotal));
-        binding.taxTxt.setText(String.format("$%.0f", tax));
-        binding.deliveryTxt.setText(String.format("$%.0f", delivery));
-        binding.totalTxt.setText(String.format("$%.0f", total));
+        binding.subtotalTxt.setText(String.format("%.0fđ", subtotal));
+        binding.taxTxt.setText(String.format("%.0fđ", tax));
+        binding.deliveryTxt.setText(String.format("%.0fđ", delivery));
+        binding.totalTxt.setText(String.format("%.0fđ", total));
     }
 
     private void setupButtons() {

@@ -91,7 +91,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
         holder.binding.productQtyTxt.setText("SL: " + totalQty);
 
         String priceText = formatPrice(order.getTotal());
-        holder.binding.priceTxt.setText(priceText);
+        holder.binding.priceTxt.setText(priceText + "đ") ;
 
         String status = order.getStatus() != null ? order.getStatus() : "Chờ Xử Lý";
         holder.binding.statusBadge.setText(status);
@@ -134,7 +134,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
     }
 
     private String formatPrice(double value) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         return formatter.format(value);
     }
 
