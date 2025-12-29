@@ -63,7 +63,7 @@ public class PaymentActivity extends AppCompatActivity {
         // Initialize appSettings with default values before loading from Firebase
         appSettings = new AppSettingsModel();
         appSettings.setCurrency("VND");
-        appSettings.setCurrencySymbol("vnd");
+        appSettings.setCurrencySymbol("đ");
         appSettings.setTaxRate(0.1);
         appSettings.setShippingFee(10);
 
@@ -224,7 +224,7 @@ public class PaymentActivity extends AppCompatActivity {
             } else {
                 appSettings = new AppSettingsModel();
                 appSettings.setCurrency("VND");
-                appSettings.setCurrencySymbol("vnd");
+                appSettings.setCurrencySymbol("đ");
                 appSettings.setTaxRate(0.1);
                 appSettings.setShippingFee(10);
             }
@@ -233,13 +233,13 @@ public class PaymentActivity extends AppCompatActivity {
 
     private String formatPrice(double value) {
         if (appSettings == null) {
-            return String.format(Locale.getDefault(), "%.0f", value) + "vnd";
+            return  String.format(Locale.getDefault() + "đ", "%.0f", value);
         }
         String symbol = appSettings.getCurrencySymbol();
         if (symbol == null || symbol.isEmpty()) {
-            symbol = "vnd";
+            symbol = "đ";
         }
-        return String.format(Locale.getDefault(), "%.0f", value) + symbol;
+        return symbol + String.format(Locale.getDefault(), "%.0f", value);
     }
 
     private void placeOrder() {

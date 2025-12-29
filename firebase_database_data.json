@@ -1,7 +1,7 @@
 {
   "AppSettings": {
     "currency": "VND",
-    "currencySymbol": "vnd",
+    "currencySymbol": "đ",
     "featuredCategories": {
       "0": 1,
       "1": 2,
@@ -259,7 +259,7 @@
     "coupon_2": {
       "code": "FREESHIP",
       "discount": 0,
-      "description": "Free shipping on orders over 100vnd",
+      "description": "Free shipping on orders over $100",
       "expiryDate": 1735689600000,
       "minPurchase": 100,
       "type": "shipping"
@@ -267,7 +267,7 @@
     "coupon_3": {
       "code": "SAVE20",
       "discount": 20,
-      "description": "20vnd off on orders over 150vnd",
+      "description": "$20 off on orders over $150",
       "expiryDate": 1735689600000,
       "minPurchase": 150,
       "type": "fixed"
