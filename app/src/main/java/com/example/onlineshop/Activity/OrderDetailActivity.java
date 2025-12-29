@@ -86,7 +86,6 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     private String formatPrice(double value) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
-        return formatter.format(value);
+        return String.format("%.0f", value) + "đ";
     }
 }

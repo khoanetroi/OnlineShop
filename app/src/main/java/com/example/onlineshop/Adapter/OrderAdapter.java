@@ -134,8 +134,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Viewholder> 
     }
 
     private String formatPrice(double value) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
-        return formatter.format(value);
+        return String.format("%.0f", value) + "đ";
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {

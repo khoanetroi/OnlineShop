@@ -71,8 +71,7 @@ public class OrderDetailProductAdapter extends RecyclerView.Adapter<OrderDetailP
     }
 
     private String formatPrice(double value) {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.US);
-        return formatter.format(value);
+        return String.format("%.0f", value) + "đ";
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {
