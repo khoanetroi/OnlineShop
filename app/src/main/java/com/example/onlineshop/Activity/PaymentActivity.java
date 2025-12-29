@@ -233,13 +233,13 @@ public class PaymentActivity extends AppCompatActivity {
 
     private String formatPrice(double value) {
         if (appSettings == null) {
-            return "$" + String.format(Locale.getDefault(), "%.2f", value);
+            return String.format(Locale.getDefault(), "%.2f", value) + "₫";
         }
         String symbol = appSettings.getCurrencySymbol();
         if (symbol == null || symbol.isEmpty()) {
-            symbol = "$";
+            symbol = "₫";
         }
-        return symbol + String.format(Locale.getDefault(), "%.2f", value);
+        return String.format(Locale.getDefault(), "%.2f", value) + symbol;
     }
 
     private void placeOrder() {

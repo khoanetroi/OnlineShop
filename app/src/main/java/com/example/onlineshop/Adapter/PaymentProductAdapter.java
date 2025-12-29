@@ -42,7 +42,7 @@ public class PaymentProductAdapter extends RecyclerView.Adapter<PaymentProductAd
             holder.binding.colorTxt.setText("Color: -");
         }
 
-        holder.binding.priceTxt.setText("$" + item.getPrice());
+        holder.binding.priceTxt.setText(item.getPrice() + "₫");
 
         if (item.getPicUrl() != null && !item.getPicUrl().isEmpty()) {
             RequestOptions options = new RequestOptions().transform(new CenterInside());
