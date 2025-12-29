@@ -142,11 +142,11 @@ public class MainRepository {
                 } catch (Exception e) {
                     // Handle type conversion errors from Firebase
                     android.util.Log.e("MainRepository", "Error parsing AppSettings", e);
-                    
+
                     // Try to manually parse the data
                     try {
                         AppSettingsModel settings = new AppSettingsModel();
-                        
+
                         if (snapshot.hasChild("currency")) {
                             settings.setCurrency(snapshot.child("currency").getValue(String.class));
                         }
@@ -195,7 +195,7 @@ public class MainRepository {
                         if (snapshot.hasChild("supportPhone")) {
                             settings.setSupportPhone(snapshot.child("supportPhone").getValue(String.class));
                         }
-                        
+
                         settingsData.setValue(settings);
                     } catch (Exception e2) {
                         android.util.Log.e("MainRepository", "Manual parsing also failed", e2);
@@ -211,11 +211,11 @@ public class MainRepository {
         });
         return settingsData;
     }
-    
+
     private AppSettingsModel createDefaultSettings() {
         AppSettingsModel defaultSettings = new AppSettingsModel();
-        defaultSettings.setCurrency("USD");
-        defaultSettings.setCurrencySymbol("$");
+        defaultSettings.setCurrency("VND");
+        defaultSettings.setCurrencySymbol("đ");
         defaultSettings.setTaxRate(0.1);
         defaultSettings.setShippingFee(10);
         defaultSettings.setFreeShippingThreshold(100);

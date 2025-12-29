@@ -74,7 +74,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         try {
             holder.binding.titleTxt.setText(item.getTitle() != null ? item.getTitle() : "");
-            holder.binding.priceTxt.setText(String.format("%.2f", item.getPrice()) + "₫");
+            holder.binding.priceTxt.setText(String.format("%.0f", item.getPrice())+ "đ");
 
             RequestOptions options = new RequestOptions().transform(new CenterInside());
             if (item.getPicUrl() != null && !item.getPicUrl().isEmpty() && item.getPicUrl().get(0) != null) {

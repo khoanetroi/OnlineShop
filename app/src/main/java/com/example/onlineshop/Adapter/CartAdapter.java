@@ -79,7 +79,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
         }
         
         double totalPrice = item.getPrice() * item.getNumberinCart();
-        holder.binding.priceTxt.setText(String.format("%.2f", totalPrice) + "₫");
+        holder.binding.priceTxt.setText(String.format("%.0f", totalPrice) + "đ");
         
         Glide.with(holder.itemView.getContext())
                 .load(item.getPicUrl().get(0))

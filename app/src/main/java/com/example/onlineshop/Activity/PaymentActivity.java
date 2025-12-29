@@ -59,14 +59,14 @@ public class PaymentActivity extends AppCompatActivity {
 
         managmentCart = new ManagmentCart(this);
         mainRepository = new MainRepository();
-        
+
         // Initialize appSettings with default values before loading from Firebase
         appSettings = new AppSettingsModel();
         appSettings.setCurrency("USD");
         appSettings.setCurrencySymbol("$");
         appSettings.setTaxRate(0.1);
         appSettings.setShippingFee(10);
-        
+
         loadAppSettings();
 
         getIntentData();
@@ -223,8 +223,8 @@ public class PaymentActivity extends AppCompatActivity {
                 setupSummary();
             } else {
                 appSettings = new AppSettingsModel();
-                appSettings.setCurrency("USD");
-                appSettings.setCurrencySymbol("$");
+                appSettings.setCurrency("VND");
+                appSettings.setCurrencySymbol("đ");
                 appSettings.setTaxRate(0.1);
                 appSettings.setShippingFee(10);
             }
@@ -233,13 +233,13 @@ public class PaymentActivity extends AppCompatActivity {
 
     private String formatPrice(double value) {
         if (appSettings == null) {
-            return String.format(Locale.getDefault(), "%.2f", value) + "₫";
+            return  String.format(Locale.getDefault() + "đ", "%.0f", value);
         }
         String symbol = appSettings.getCurrencySymbol();
         if (symbol == null || symbol.isEmpty()) {
-            symbol = "₫";
+            symbol = "đ";
         }
-        return String.format(Locale.getDefault(), "%.2f", value) + symbol;
+        return symbol + String.format(Locale.getDefault(), "%.0f", value);
     }
 
     private void placeOrder() {
@@ -295,7 +295,7 @@ public class PaymentActivity extends AppCompatActivity {
                     "Đang Xử Lý",
                     items
             );
-            
+
             order.setOrderDate(currentTime);
             order.setCreatedAt(currentTime);
 
@@ -307,7 +307,7 @@ public class PaymentActivity extends AppCompatActivity {
                         removeOrderedItemsFromCart(items);
 
                         Toast.makeText(PaymentActivity.this, "Đặt hàng thành công", Toast.LENGTH_SHORT).show();
-                        
+
                         // Delay navigation to ensure Firebase operations complete
                         binding.getRoot().postDelayed(() -> {
                             try {
@@ -326,13 +326,13 @@ public class PaymentActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> {
                         binding.progressBar.setVisibility(View.GONE);
                         updateCheckoutButtonState(true);
-                        
+
                         String errorMessage = "Không thể đặt hàng";
                         if (e.getMessage() != null) {
                             errorMessage += ": " + e.getMessage();
                         }
                         Toast.makeText(PaymentActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                        
+
                         android.util.Log.e("PaymentActivity", "Order placement failed", e);
                         android.util.Log.e("PaymentActivity", "Order details: orderId=" + orderId + ", userId=" + uid + ", items=" + (items != null ? items.size() : 0));
                         android.util.Log.e("PaymentActivity", "Order object: " + order.toString());
@@ -359,7 +359,7 @@ public class PaymentActivity extends AppCompatActivity {
                     }
                 }
             }
-            
+
             managmentCart.clearCart();
             for (ItemsModel item : currentCart) {
                 managmentCart.insertItem(item);
@@ -385,7 +385,7 @@ public class PaymentActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     for (DataSnapshot child : snapshot.getChildren()) {
-                                        child.getRef().removeValue().addOnFailureListener(e -> 
+                                        child.getRef().removeValue().addOnFailureListener(e ->
                                             android.util.Log.e("PaymentActivity", "Error removing cart item from Firebase", e)
                                         );
                                     }
